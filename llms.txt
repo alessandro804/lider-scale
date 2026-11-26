@@ -1,0 +1,23 @@
+# Lider Scale
+
+> A complete sales system: pipeline, proposals signed by link, deposits collected on the spot and commission calculated on its own. See the health of your sales floor in one minute.
+
+Sales management software by Lider Commerce. It follows every deal from the first contact to the confirmed payment: pipeline, meetings, proposals signed by link, deposits, receivables and automatic commission. Available in English, Spanish and Portuguese.
+
+## Pages
+- [English](https://scale.lidercommerce.com.br/en/): main page in English
+- [Espanol](https://scale.lidercommerce.com.br/es/): main page in Spanish
+- [Portugues](https://scale.lidercommerce.com.br/): main page in Portuguese
+
+## Pricing
+- Onboarding, one time: R$ 2.000 / US$ 449 / € 399
+- Monthly, up to 4 users: R$ 1.500 / US$ 349 / € 299
+- Additional user, per month: R$ 200 / US$ 49 / € 39
+
+## How a deal flows
+1. The lead arrives and already has an owner
+2. The meeting leaves the chat and becomes a commitment
+3. The proposal is ready inside the meeting
+4. The client accepts and signs by link
+5. The deposit lands before you leave the room
+6. The project opens and the commission is calculated
