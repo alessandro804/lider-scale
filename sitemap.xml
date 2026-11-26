@@ -27,4 +27,58 @@
     <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/"/>
   </url>
+  <url>
+    <loc>https://liderscale.com/termos/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/termos/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/terms/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/terminos/"/>
+  </url>
+  <url>
+    <loc>https://liderscale.com/privacidade/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/privacidade/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/privacidad/"/>
+  </url>
+  <url>
+    <loc>https://liderscale.com/en/terms/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/termos/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/terms/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/terminos/"/>
+  </url>
+  <url>
+    <loc>https://liderscale.com/en/privacy/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/privacidade/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/privacidad/"/>
+  </url>
+  <url>
+    <loc>https://liderscale.com/es/terminos/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/termos/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/terms/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/terminos/"/>
+  </url>
+  <url>
+    <loc>https://liderscale.com/es/privacidad/</loc>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/privacidade/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/privacy/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/privacidad/"/>
+  </url>
 </urlset>
