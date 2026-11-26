@@ -43,4 +43,4 @@ Disallow: /
 User-agent: ImagesiftBot
 Disallow: /
 
-Sitemap: https://scale.lidercommerce.com.br/sitemap.xml
+Sitemap: https://liderscale.com/sitemap.xml

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://scale.lidercommerce.com.br/</loc>
+    <loc>https://liderscale.com/</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://scale.lidercommerce.com.br/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://scale.lidercommerce.com.br/en/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://scale.lidercommerce.com.br/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/"/>
   </url>
   <url>
-    <loc>https://scale.lidercommerce.com.br/en/</loc>
+    <loc>https://liderscale.com/en/</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://scale.lidercommerce.com.br/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://scale.lidercommerce.com.br/en/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://scale.lidercommerce.com.br/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/"/>
   </url>
   <url>
-    <loc>https://scale.lidercommerce.com.br/es/</loc>
+    <loc>https://liderscale.com/es/</loc>
     <lastmod>2026-11-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://scale.lidercommerce.com.br/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://scale.lidercommerce.com.br/en/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://scale.lidercommerce.com.br/es/"/>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://liderscale.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://liderscale.com/en/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://liderscale.com/es/"/>
   </url>
 </urlset>

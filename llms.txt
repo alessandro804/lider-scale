@@ -5,9 +5,9 @@
 Sales management software by Lider Commerce. It follows every deal from the first contact to the confirmed payment: pipeline, meetings, proposals signed by link, deposits, receivables and automatic commission. Available in English, Spanish and Portuguese.
 
 ## Pages
-- [English](https://scale.lidercommerce.com.br/en/): main page in English
-- [Espanol](https://scale.lidercommerce.com.br/es/): main page in Spanish
-- [Portugues](https://scale.lidercommerce.com.br/): main page in Portuguese
+- [English](https://liderscale.com/en/): main page in English
+- [Espanol](https://liderscale.com/es/): main page in Spanish
+- [Portugues](https://liderscale.com/): main page in Portuguese
 
 ## Pricing
 - Onboarding, one time: R$ 2.000 / US$ 449 / € 399
