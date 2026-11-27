@@ -168,6 +168,84 @@ body{
 }
 @keyframes gira{ to{ transform: rotate(360deg); } }
 
+/* ── o sinal ── */
+.sinal{ border-top:1px solid var(--borda); padding:24px 30px 28px; }
+.sinal h3{ font-size:16px; font-weight:700; margin-bottom:4px; }
+.sinal .sub{ font-size:13.5px; color: var(--tinta-2); margin-bottom:16px; }
+.sinal .quanto{
+  font-size:26px; font-weight:780; letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums; margin-bottom:16px;
+}
+.formas{ display:flex; gap:10px; flex-wrap:wrap; }
+.forma{
+  flex:1 1 180px; display:inline-flex; align-items:center; justify-content:center; gap:9px;
+  padding:14px 16px; font-size:15px; font-weight:680; font-family:inherit;
+  background: var(--violeta); color:#fff; border:none; border-radius: var(--raio-p);
+  cursor:pointer; transition:.15s;
+}
+.forma.alt{ background: var(--papel); color: var(--violeta-escuro); border:1.5px solid var(--violeta); }
+.forma:hover:not(:disabled){ background: var(--violeta-escuro); color:#fff; }
+.forma:disabled{ opacity:.55; cursor:not-allowed; }
+
+/* ★★★★★ O COPIA E COLA VEM SEMPRE, E NAO SO O QR. Regra dele, de 15/11, para
+   todo recebimento por Pix: "o usuario fica parado ali se tiver apenas no
+   celular". Quem abre a proposta no proprio celular nao tem como ler o
+   proprio QR da tela, e sem o copia e cola o pagamento simplesmente para. */
+.pix{ background: var(--papel-2); border:1px solid var(--borda); border-radius: var(--raio-p); padding:18px; }
+.pix .qr{ display:block; margin:0 auto 16px; width:190px; height:190px; border-radius:8px; background:#fff; }
+.pix .rotulo-pix{ font-size:12.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color: var(--tinta-3); margin-bottom:8px; }
+.pix .codigo{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size:11.5px; line-height:1.5; color: var(--tinta); word-break:break-all;
+  background: var(--papel); border:1px solid var(--borda); border-radius:8px;
+  padding:11px 13px; max-height:96px; overflow:auto; margin-bottom:11px;
+}
+.pix .copiar{
+  width:100%; padding:13px; font-size:15px; font-weight:680; font-family:inherit;
+  background: var(--violeta); color:#fff; border:none; border-radius: var(--raio-p); cursor:pointer;
+}
+.pix .copiar:hover{ background: var(--violeta-escuro); }
+.pix .copiar.feito{ background: var(--verde); }
+.esperando{
+  display:flex; align-items:center; gap:9px; margin-top:14px;
+  font-size:13.5px; color: var(--tinta-2);
+}
+.pago{
+  margin-top:4px; padding:15px 17px; background:#EAF7EF;
+  border:1px solid #BFE3CC; border-radius: var(--raio-p);
+  font-size:14.5px; font-weight:620; color:#0B6B3C;
+}
+.erro-sinal{
+  background:#FDECEC; border:1px solid #F5C2C2; color: var(--vermelho);
+  border-radius: var(--raio-p); padding:12px 15px; font-size:13.5px; margin-bottom:14px;
+}
+
+/* ── baixar em PDF ── */
+/* ★★★ BOTAO SECUNDARIO, de contorno: ele nao pode competir com o botao de
+   aceitar. Quem abre a proposta tem uma decisao para tomar, e duas chamadas
+   cheias lado a lado fazem a pessoa parar para escolher entre elas. */
+.baixar{
+  display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+  padding:11px 17px; font-size:14px; font-weight:650; font-family:inherit;
+  background: var(--papel); color: var(--violeta-escuro);
+  border:1.5px solid var(--violeta); border-radius: var(--raio-p);
+  cursor:pointer; transition:.15s;
+}
+.baixar:hover:not(:disabled){ background: var(--violeta-leve); }
+.baixar:disabled{ opacity:.6; cursor:not-allowed; }
+.baixar svg{ flex:0 0 auto; }
+.girando-v{
+  display:inline-block; width:13px; height:13px; border:2px solid rgba(120,44,251,.3);
+  border-top-color: var(--violeta); border-radius:50%; animation: gira .7s linear infinite;
+  flex:0 0 auto;
+}
+/* ★★ erro do download na caixa DELE, em vermelho, e nunca junto do texto
+   de validade: cada um na sua caixa, o erro primeiro de quem o causou. */
+.erro-pdf{
+  background:#FDECEC; border:1px solid #F5C2C2; color: var(--vermelho);
+  border-radius: var(--raio-p); padding:11px 14px; font-size:13.5px; margin-top:14px;
+}
+
 /* ── os tres idiomas ── */
 .idiomas{ display:flex; gap:7px; margin-top:16px; }
 .lang{
@@ -179,7 +257,7 @@ body{
 .lang.atual{ background: var(--violeta-leve); color: var(--violeta-escuro); border-color: var(--violeta); }
 
 @media print{
-  .aceitar, .idiomas{ display:none; }
+  .aceitar, .idiomas, .baixar, .erro-pdf, .sinal{ display:none; }
   body{ background:#fff; padding:0; }
   .folha{ border:none; box-shadow:none; max-width:none; }
 }
@@ -244,6 +322,22 @@ const FRASES = {
     sem_rede_sub: 'Confira sua conexao com a internet e tente de novo em instantes.',
     erro_aceite: 'Nao foi possivel registrar o aceite agora. Tente de novo em instantes.',
     erro_rede_aceite: 'Nao foi possivel falar com o sistema. Confira sua conexao com a internet e tente de novo em instantes.',
+    muitos_downloads: 'Muitos downloads deste documento por aqui. Aguarde alguns minutos e tente de novo.',
+    sinal_pix_fora: 'O pagamento por Pix esta indisponivel no momento. Tente pelo cartao ou fale com quem enviou a proposta.',
+    sinal_cartao_fora: 'O pagamento por cartao esta indisponivel no momento. Tente pelo Pix ou fale com quem enviou a proposta.',
+    sinal_aceite_antes: 'Aceite a proposta antes de pagar o sinal.',
+    sinal_nada_aberto: 'Esta proposta nao tem valor em aberto para pagar.',
+    sinal_titulo: 'Pagar o sinal', sinal_sub: 'Com o sinal confirmado, ja comecamos.',
+    pagar_cartao: 'Pagar com cartao', pagar_pix: 'Pagar com Pix',
+    abrindo: 'Abrindo', gerando: 'Gerando',
+    pix_rotulo: 'Pix copia e cola', pix_copiar: 'Copiar codigo Pix', pix_copiado: 'Codigo copiado',
+    esperando: 'Assim que o pagamento for confirmado, esta pagina avisa sozinha.',
+    sinal_pago: 'Sinal recebido. Obrigado!',
+    cartao_aberto: 'A pagina de pagamento abriu numa aba nova. Se nao abriu, use o botao de novo.',
+    erro_sinal: 'Nao foi possivel gerar a cobranca agora. Tente de novo em instantes.',
+    baixar_pdf: 'Baixar em PDF', baixando: 'Preparando',
+    ciclo_mensal: 'mensal', ciclo_anual: 'anual',
+    erro_pdf: 'Nao foi possivel gerar o PDF agora. Tente de novo em instantes.',
   },
   en: {
     titulo: 'Business proposal',
@@ -270,6 +364,22 @@ const FRASES = {
     sem_rede_sub: 'Check your internet connection and try again in a moment.',
     erro_aceite: 'Could not record your acceptance right now. Try again in a moment.',
     erro_rede_aceite: 'Could not reach the system. Check your internet connection and try again in a moment.',
+    muitos_downloads: 'Too many downloads of this document from here. Wait a few minutes and try again.',
+    sinal_pix_fora: 'Pix payment is unavailable right now. Try the card, or contact whoever sent the proposal.',
+    sinal_cartao_fora: 'Card payment is unavailable right now. Try Pix, or contact whoever sent the proposal.',
+    sinal_aceite_antes: 'Accept the proposal before paying the deposit.',
+    sinal_nada_aberto: 'This proposal has no outstanding amount to pay.',
+    sinal_titulo: 'Pay the deposit', sinal_sub: 'Once the deposit clears, we get started.',
+    pagar_cartao: 'Pay by card', pagar_pix: 'Pay with Pix',
+    abrindo: 'Opening', gerando: 'Generating',
+    pix_rotulo: 'Pix copy and paste', pix_copiar: 'Copy Pix code', pix_copiado: 'Code copied',
+    esperando: 'As soon as the payment clears, this page updates on its own.',
+    sinal_pago: 'Deposit received. Thank you!',
+    cartao_aberto: 'The payment page opened in a new tab. If it did not, press the button again.',
+    erro_sinal: 'Could not create the charge right now. Try again in a moment.',
+    baixar_pdf: 'Download as PDF', baixando: 'Preparing',
+    ciclo_mensal: 'monthly', ciclo_anual: 'yearly',
+    erro_pdf: 'Could not generate the PDF right now. Try again in a moment.',
   },
   es: {
     titulo: 'Propuesta comercial',
@@ -296,6 +406,22 @@ const FRASES = {
     sem_rede_sub: 'Revisa tu conexion a internet e intenta de nuevo en instantes.',
     erro_aceite: 'No fue posible registrar la aceptacion ahora. Intenta de nuevo en instantes.',
     erro_rede_aceite: 'No fue posible hablar con el sistema. Revisa tu conexion a internet e intenta de nuevo en instantes.',
+    muitos_downloads: 'Demasiadas descargas de este documento por aqui. Espera unos minutos e intenta de nuevo.',
+    sinal_pix_fora: 'El pago por Pix esta indisponible ahora. Prueba con la tarjeta o habla con quien envio la propuesta.',
+    sinal_cartao_fora: 'El pago con tarjeta esta indisponible ahora. Prueba con Pix o habla con quien envio la propuesta.',
+    sinal_aceite_antes: 'Acepta la propuesta antes de pagar el anticipo.',
+    sinal_nada_aberto: 'Esta propuesta no tiene valor pendiente de pago.',
+    sinal_titulo: 'Pagar el anticipo', sinal_sub: 'Con el anticipo confirmado, ya empezamos.',
+    pagar_cartao: 'Pagar con tarjeta', pagar_pix: 'Pagar con Pix',
+    abrindo: 'Abriendo', gerando: 'Generando',
+    pix_rotulo: 'Pix copia y pega', pix_copiar: 'Copiar codigo Pix', pix_copiado: 'Codigo copiado',
+    esperando: 'En cuanto se confirme el pago, esta pagina avisa sola.',
+    sinal_pago: 'Anticipo recibido. Gracias!',
+    cartao_aberto: 'La pagina de pago se abrio en una pestana nueva. Si no se abrio, usa el boton otra vez.',
+    erro_sinal: 'No fue posible generar el cobro ahora. Intenta de nuevo en instantes.',
+    baixar_pdf: 'Descargar en PDF', baixando: 'Preparando',
+    ciclo_mensal: 'mensual', ciclo_anual: 'anual',
+    erro_pdf: 'No fue posible generar el PDF ahora. Intenta de nuevo en instantes.',
   },
 };
 
@@ -358,6 +484,78 @@ function seletorIdioma(){
       return '<button class="lang' + (x[0] === atual ? ' atual' : '') +
              '" data-l="' + x[0] + '">' + x[1] + '</button>';
     }).join('') + '</div>';
+}
+
+/* ═════════════════════════════════════════════════════════════════════════
+   BAIXAR EM PDF
+   ═════════════════════════════════════════════════════════════════════════
+   ★★★★★ O ARQUIVO VEM POR `fetch`, E NAO POR UM LINK DIRETO. Com link, um
+     erro do servidor joga o cliente numa aba com texto cru e a pagina da
+     proposta fica para tras. Trazendo o arquivo por aqui, o erro aparece na
+     caixa vermelha ao lado do botao, no idioma dele, e a proposta continua
+     aberta atras.
+
+   ★★★ O NOME DO ARQUIVO VEM DO SERVIDOR, pelo `Content-Disposition`. O
+     backend expoe esse cabecalho de proposito; sem isso o navegador o esconde
+     do JavaScript e a proposta cairia na pasta de downloads com um nome
+     qualquer, sem erro nenhum no caminho. O nome de reserva existe so para o
+     caso de o cabecalho nao chegar. */
+function botaoDeBaixar(){
+  return '<div id="erroPdf"></div>' +
+    '<button class="baixar" id="btnPdf">' +
+      '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+        '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>' +
+        '<polyline points="7 10 12 15 17 10"></polyline>' +
+        '<line x1="12" y1="15" x2="12" y2="3"></line></svg>' +
+      '<span>' + f('baixar_pdf') + '</span>' +
+    '</button>';
+}
+
+function ligarBaixar(){
+  const b = document.getElementById('btnPdf');
+  if (!b) return;
+  const dentro = b.innerHTML;
+  b.addEventListener('click', async function(){
+    document.getElementById('erroPdf').innerHTML = '';
+    b.disabled = true;
+    b.innerHTML = '<span class="girando-v"></span><span>' + f('baixando') + '</span>';
+    try {
+      const t = new URLSearchParams(window.location.search).get('t');
+      const r = await fetch(API + '/p/' + encodeURIComponent(t) + '/pdf?i=' + idiomaAtual());
+      if (!r.ok) {
+        /* ★★★★ A FRASE E DAQUI, NAO DO SERVIDOR. A API responde em portugues, e
+           mostrar a resposta dela crua punha uma frase em portugues no meio
+           de uma pagina em ingles, na hora em que algo ja deu errado. Idioma
+           pela metade parece descuido, e aqui o cliente esta decidindo gastar
+           dinheiro. E o mesmo caminho que a pagina ja usa quando a proposta
+           nao carrega: la tambem o recado e nosso, nao o do servidor. */
+        const recados = { 404: f('indisponivel'), 429: f('muitos_downloads') };
+        document.getElementById('erroPdf').innerHTML =
+          '<div class="erro-pdf">' + texto(recados[r.status] || f('erro_pdf')) + '</div>';
+        return;
+      }
+      const cab = r.headers.get('content-disposition') || '';
+      const achou = cab.match(/filename="?([^";]+)"?/);
+      const arquivo = await r.blob();
+      const url = URL.createObjectURL(arquivo);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = achou ? achou[1] : 'proposta.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      /* ★★ soltar o endereco temporario depois do clique: sem isto o arquivo
+         fica inteiro na memoria do navegador ate a aba fechar. */
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    } catch (e) {
+      document.getElementById('erroPdf').innerHTML =
+        '<div class="erro-pdf">' + f('erro_rede_aceite') + '</div>';
+    } finally {
+      b.disabled = false;
+      b.innerHTML = dentro;
+    }
+  });
 }
 
 function caixaDeAceite(p){
@@ -438,10 +636,197 @@ function ligarAceite(){
   });
 }
 
+/* ═════════════════════════════════════════════════════════════════════════
+   O SINAL
+   ════════════════════════════════════════════════════════════════════════
+   ★★★★★ O PAGAMENTO SO APARECE DEPOIS DO ACEITE. A ordem do motor de
+     fechamento e proposta, aceite, sinal. Pedir dinheiro antes de a pessoa
+     concordar com o que esta escrito inverte a conversa e queima a venda.
+
+   ★★★★ A PAGINA PERGUNTA, NAO E AVISADA. O cliente paga o Pix dentro do
+     aplicativo do banco dele, e nada no navegador sabe disso. Entao, enquanto
+     ha cobranca esperando, a pagina consulta de tempos em tempos e se
+     atualiza sozinha. */
+var pararDePerguntar = null;
+
+function blocoDoSinal(estado){
+  if (!estado || !estado.aceita || !estado.sinal) return '';
+
+  if (estado.sinal.pago) {
+    return '<div class="sinal"><div class="pago">' + f('sinal_pago') + '</div></div>';
+  }
+
+  var c = estado.cobranca;
+  var meio = '';
+
+  if (c && c.estado === 'aguardando' && c.forma === 'pix' && c.copia_e_cola) {
+    /* ★★★★★ O COPIA E COLA PRIMEIRO, SEMPRE. O QR so entra quando o banco
+       mandou a imagem, e ele e o extra, nao o principal: quem abre a
+       proposta no celular nao consegue ler o QR da propria tela. */
+    meio = '<div class="pix">' +
+      (c.qrcode ? '<img class="qr" alt="" src="data:image/png;base64,' + texto(c.qrcode) + '">' : '') +
+      '<div class="rotulo-pix">' + f('pix_rotulo') + '</div>' +
+      '<div class="codigo" id="pixCodigo">' + texto(c.copia_e_cola) + '</div>' +
+      '<button class="copiar" id="btnCopiar">' + f('pix_copiar') + '</button>' +
+      '</div>' + esperandoHtml();
+  } else if (c && c.estado === 'aguardando' && c.forma === 'cartao' && c.link_pagamento) {
+    meio = '<div class="formas">' +
+      '<a class="forma" href="' + texto(c.link_pagamento) + '" target="_blank" rel="noopener">' +
+        f('pagar_cartao') + '</a></div>' + esperandoHtml();
+  } else {
+    meio = '<div class="formas">' +
+      '<button class="forma" id="btnCartao">' + f('pagar_cartao') + '</button>' +
+      '<button class="forma alt" id="btnPix">' + f('pagar_pix') + '</button>' +
+      '</div>';
+  }
+
+  return '<div class="sinal">' +
+    '<h3>' + f('sinal_titulo') + '</h3>' +
+    '<div class="sub">' + f('sinal_sub') + '</div>' +
+    '<div id="erroSinal"></div>' +
+    '<div class="quanto">' + texto(estado.sinal.valor) + '</div>' +
+    meio +
+  '</div>';
+}
+
+function esperandoHtml(){
+  return '<div class="esperando"><span class="girando-v"></span><span>' + f('esperando') + '</span></div>';
+}
+
+function erroSinal(t){
+  var caixa = document.getElementById('erroSinal');
+  if (caixa) caixa.innerHTML = '<div class="erro-sinal">' + texto(t) + '</div>';
+}
+
+/* ★★★ `navigator.clipboard` nao existe em todo navegador de celular, e
+   falha calado quando a pagina nao esta em https. O caminho de baixo e feio
+   e funciona em todos: sem ele, o botao principal do Pix nao faz nada para
+   uma parte dos clientes, e ninguem fica sabendo. */
+async function copiarTexto(txt){
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(txt);
+      return true;
+    }
+  } catch (e) { /* cai no caminho de baixo */ }
+  try {
+    var a = document.createElement('textarea');
+    a.value = txt;
+    a.setAttribute('readonly', '');
+    a.style.position = 'fixed';
+    a.style.opacity = '0';
+    document.body.appendChild(a);
+    a.select();
+    a.setSelectionRange(0, a.value.length);
+    var deu = document.execCommand('copy');
+    document.body.removeChild(a);
+    return deu;
+  } catch (e) { return false; }
+}
+
+function ligarSinal(estado){
+  var copiar = document.getElementById('btnCopiar');
+  if (copiar) {
+    copiar.addEventListener('click', async function(){
+      var codigo = document.getElementById('pixCodigo');
+      var deu = await copiarTexto(codigo ? codigo.textContent : '');
+      if (!deu) return erroSinal(f('erro_sinal'));
+      copiar.textContent = f('pix_copiado');
+      copiar.classList.add('feito');
+      setTimeout(function(){
+        copiar.textContent = f('pix_copiar');
+        copiar.classList.remove('feito');
+      }, 2500);
+    });
+  }
+
+  [['btnCartao', 'cartao'], ['btnPix', 'pix']].forEach(function(par){
+    var b = document.getElementById(par[0]);
+    if (!b) return;
+    b.addEventListener('click', async function(){
+      var dentro = b.textContent;
+      document.getElementById('erroSinal').innerHTML = '';
+      b.disabled = true;
+      b.textContent = (par[1] === 'pix' ? f('gerando') : f('abrindo')) + '...';
+      try {
+        var t = new URLSearchParams(window.location.search).get('t');
+        var r = await fetch(API + '/p/' + encodeURIComponent(t) + '/pagar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ forma: par[1] }),
+        });
+        var d = await r.json().catch(function(){ return null; });
+        if (!r.ok || !d || d.ok === false) {
+          b.disabled = false; b.textContent = dentro;
+          /* ★★★ O MOTIVO QUE O PROVEDOR DEVOLVEU APARECE, traduzido pela API
+             quando ela sabe traduzir. Trocar por um texto nosso dizendo que
+             nao sabemos explicar tira do cliente a unica informacao que
+             poderia resolver o problema dele. */
+          /* ★★★★ RECADO NOSSO VEM COM CODIGO E E ESCRITO AQUI, no idioma da
+             pagina. Recado SEM codigo e do provedor de pagamento, e vai para
+             a tela como veio: e o motivo de verdade da recusa, e trocar por
+             um texto nosso tiraria do cliente a unica informacao que resolve
+             o problema dele. */
+          var nossos = {
+            'pix-indisponivel': f('sinal_pix_fora'),
+            'cartao-indisponivel': f('sinal_cartao_fora'),
+            'aceite-primeiro': f('sinal_aceite_antes'),
+            'nada-em-aberto': f('sinal_nada_aberto'),
+            'forma-invalida': f('erro_sinal'),
+          };
+          return erroSinal((d && d.codigo && nossos[d.codigo]) || (d && d.erro) || f('erro_sinal'));
+        }
+        /* ★★ o cartao abre a fatura do provedor numa aba nova, e a pagina da
+           proposta fica aqui atras, esperando a confirmacao. */
+        if (par[1] === 'cartao' && d.cobranca && d.cobranca.link_pagamento) {
+          window.open(d.cobranca.link_pagamento, '_blank', 'noopener');
+        }
+        await atualizarSinal();
+      } catch (e) {
+        b.disabled = false; b.textContent = dentro;
+        erroSinal(f('erro_rede_aceite'));
+      }
+    });
+  });
+}
+
+async function atualizarSinal(){
+  var t = new URLSearchParams(window.location.search).get('t');
+  var estado = null;
+  try {
+    var r = await fetch(API + '/p/' + encodeURIComponent(t) + '/pagamento');
+    if (r.ok) estado = await r.json().catch(function(){ return null; });
+  } catch (e) { return; }
+  if (!estado || estado.ok === false) return;
+
+  var lugar = document.getElementById('caixaSinal');
+  if (!lugar) return;
+  lugar.innerHTML = blocoDoSinal(estado);
+  ligarSinal(estado);
+
+  var esperando = !!(estado.aceita && estado.sinal && !estado.sinal.pago &&
+                     estado.cobranca && estado.cobranca.estado === 'aguardando');
+  if (esperando && !pararDePerguntar) {
+    /* ★★ de 6 em 6 segundos enquanto ha cobranca esperando, e nunca depois:
+       pergunta que continua para sempre vira carga no servidor por aba
+       aberta e esquecida. */
+    pararDePerguntar = setInterval(atualizarSinal, 6000);
+  }
+  if (!esperando && pararDePerguntar) {
+    clearInterval(pararDePerguntar);
+    pararDePerguntar = null;
+  }
+}
+
 function desenhar(p){
   const itens = p.itens.map(function (i) {
     const qtd = i.quantidade > 1 ? '<div class="obs">' + i.quantidade + ' ' + f('unidades') + '</div>' : '';
-    const rec = i.recorrente ? '<div class="obs">' + f('cobranca') + ' ' + texto(i.ciclo || '') + '</div>' : '';
+    /* ★★★ O CICLO TAMBEM TRADUZ. Ele e gravado em portugues no catalogo, e
+       mostrado cru dava "billed mensal" para o cliente estrangeiro: meia
+       traducao parece descuido, e descuido numa proposta custa confianca.
+       Ciclo que ainda nao tenha frase sai como esta, em vez de sumir. */
+    const nomeCiclo = i.ciclo ? (FRASES[idiomaAtual()]['ciclo_' + i.ciclo] || i.ciclo) : '';
+    const rec = i.recorrente ? '<div class="obs">' + f('cobranca') + ' ' + texto(nomeCiclo) + '</div>' : '';
     return '<div class="item"><div><div class="nome">' + texto(i.nome) + '</div>' + qtd + rec +
            '</div><div class="valor">' + texto(i.valor) + '</div></div>';
   }).join('');
@@ -483,11 +868,16 @@ function desenhar(p){
         '<div class="secao"><div class="rotulo">' + f('pagamento') + '</div>' + parcelas + '</div>' +
         obs +
       '</div>' +
-      '<div class="rodape">' + prazo + aceita + seletorIdioma() + '</div>' +
+      '<div class="rodape">' + prazo + aceita + botaoDeBaixar() + seletorIdioma() + '</div>' +
       caixaDeAceite(p) +
+      '<div id="caixaSinal"></div>' +
     '</div>';
 
   if (p.estado === 'enviada') ligarAceite();
+  ligarBaixar();
+  /* ★★ so vai ao servidor quando ha o que perguntar: proposta ainda nao
+     aceita nao tem sinal nenhum para mostrar. */
+  if (p.estado === 'aceita') atualizarSinal();
   document.querySelectorAll('.lang').forEach(function (b) {
     b.addEventListener('click', () => trocarIdioma(b.dataset.l));
   });
