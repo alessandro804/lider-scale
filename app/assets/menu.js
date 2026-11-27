@@ -24,6 +24,11 @@ const MENU = [
   { id:'tickets',       papeis:['super_adm'], pronto: false },
   { id:'disparos',      papeis:['super_adm'], pronto: false },
   { id:'saude',         papeis:['super_adm'], pronto: false },
+  // ★★★★ A PRIMEIRA TELA DE PLATAFORMA QUE FICA PRONTA, e e esta por um
+  //   motivo pratico: sem o certificado do banco la dentro, o Pix nao
+  //   recebe, e ate agora o unico jeito de pôr o certificado no lugar era
+  //   abrir terminal no servidor.
+  { id:'integracoes',   papeis:['super_adm'] },
 ];
 
 const ICONES = {
@@ -38,6 +43,7 @@ const ICONES = {
   tickets:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>',
   disparos:'<path d="M22 2L11 13"></path><path d="M22 2l-7 20-4-9-9-4 20-7z"></path>',
   saude:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>',
+  integracoes:'<path d="M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8z"></path><path d="M15.5 7.5l3 3L22 7l-3-3"></path>',
 };
 
 // ═══════════════════════════════════════════════════════════════════════════

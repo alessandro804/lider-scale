@@ -254,3 +254,73 @@ a.sb-item{ text-decoration:none; }
 .gota-item.apagado{ opacity:.42; cursor:default; }
 .gota-item.apagado:hover{ background:transparent; color: var(--texto-2); }
 .gota-breve{ margin-left:auto; flex:0 0 auto; color: var(--texto-3); opacity:.8; }
+
+/* ═══ ABAS ═════════════════════════════════════════════════════════════════
+   ★★★★ NASCERAM NA TELA DE INTEGRACOES, mas moram aqui de proposito: o
+   painel de plataforma inteiro e feito de telas com varias faces (contas,
+   planos, disparos), e o Lider 10 ja resolveu isso com abas. Escrever o
+   estilo dentro de uma tela faria a segunda tela copiar, e a terceira
+   copiar da segunda, cada uma com dois pixels de diferenca.
+
+   ★★★ A ABA ATIVA SE DISTINGUE POR FUNDO, nao so por cor de texto: em tema
+   escuro, mudar so a cor do texto da uma diferenca fraca demais para quem
+   enxerga pouco contraste. */
+.abas{
+  display:flex; gap:8px; flex-wrap:wrap;
+  margin: 0 0 22px; padding-bottom:2px;
+}
+.aba{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 16px; border-radius: var(--raio);
+  background: var(--superficie); color: var(--texto-2);
+  border:1px solid var(--borda);
+  font-size:14px; font-weight:600; font-family:inherit;
+  cursor:pointer; transition: var(--transicao); white-space:nowrap;
+}
+.aba:hover{ background: var(--superficie-2); color: var(--texto); border-color: var(--borda-forte); }
+.aba:focus-visible{ outline:none; box-shadow: var(--brilho); }
+.aba.ativa{
+  background: var(--violeta); color:#fff; border-color: var(--violeta);
+}
+.aba .ponto{
+  width:7px; height:7px; border-radius:50%; flex:0 0 auto;
+  background: var(--texto-3);
+}
+.aba .ponto.bom{   background: var(--verde); }
+.aba .ponto.falta{ background: var(--ambar); }
+.aba .ponto.ruim{  background: var(--vermelho); }
+.aba.ativa .ponto{ box-shadow: 0 0 0 2px rgba(255,255,255,.25); }
+
+/* ═══ FAIXA DO TOPO DA TELA DE PLATAFORMA ══════════════════════════════════ */
+.faixa-painel{
+  background: linear-gradient(135deg, var(--violeta-800), var(--violeta-600));
+  border-radius: var(--raio-g); padding:22px 24px; margin-bottom:22px;
+  border:1px solid var(--violeta-700);
+}
+.faixa-painel h2{ font-size:19px; font-weight:700; color:#fff; margin:0 0 4px; }
+.faixa-painel p{ font-size:13.5px; color: var(--violeta-100); margin:0; }
+
+/* ═══ LINHAS DE DADO (rotulo a esquerda, valor a direita) ══════════════════
+   ★★★ O valor vazio mostra o traco sozinho, e isso e regra de sistema: ali
+   ele nao e pontuacao, e a marca de "sem informacao", e sem ele a linha
+   desalinha e parece que faltou carregar. */
+.dados{ display:grid; gap:1px; background: var(--borda); border-radius: var(--raio); overflow:hidden; }
+.dados .linha{
+  display:flex; justify-content:space-between; align-items:baseline; gap:16px;
+  padding:11px 14px; background: var(--superficie);
+}
+.dados .linha .rot{ font-size:13px; color: var(--texto-2); flex:0 0 auto; }
+.dados .linha .val{ font-size:14px; color: var(--texto); font-weight:600; text-align:right; word-break:break-word; }
+.dados .linha .val.fraco{ color: var(--texto-3); font-weight:500; }
+.dados .linha .val.mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:12px; letter-spacing:-.02em; }
+
+/* ═══ O ARQUIVO ESCOLHIDO ══════════════════════════════════════════════════ */
+.arquivo{
+  display:flex; align-items:center; gap:12px;
+  padding:14px; border:1px dashed var(--borda-forte); border-radius: var(--raio);
+  background: var(--superficie); transition: var(--transicao);
+}
+.arquivo:hover{ border-color: var(--violeta); background: var(--superficie-2); }
+.arquivo .nome{ font-size:14px; color: var(--texto); flex:1 1 auto; word-break:break-all; }
+.arquivo .nome.vazio{ color: var(--texto-3); }
+.arquivo input[type=file]{ display:none; }

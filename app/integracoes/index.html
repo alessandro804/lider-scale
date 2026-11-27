@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lider Scale</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/painel.css">
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<div class="conteudo">
+  <header class="topo">
+    <h1 id="tituloTela"></h1>
+    <div class="topo-dir"></div>
+  </header>
+  <main class="area" id="area">
+    <div class="esqueleto" style="height:88px;margin-bottom:22px"></div>
+    <div class="esqueleto" style="height:44px;margin-bottom:22px"></div>
+    <div class="esqueleto" style="height:260px"></div>
+  </main>
+</div>
+
+<script src="../assets/idioma.js"></script>
+<script src="../assets/sessao.js"></script>
+<script src="../assets/menu.js"></script>
+<script>
+'use strict';
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INTEGRACOES · a tela do super ADM, onde o certificado do banco entra
+   ═══════════════════════════════════════════════════════════════════════════
+   ★★★★★ ESTA TELA EXISTE PARA O CERTIFICADO NAO PRECISAR MAIS DE TERMINAL.
+   O e-CNPJ que o banco exige para o Pix vence todo ano. Ate aqui, trocar
+   significava copiar arquivo para o servidor por linha de comando e editar o
+   arquivo de configuracao na mao. Uma vez por ano, no dia em que o Pix parou
+   e tem cliente esperando para pagar, isso e o pior momento possivel para
+   lembrar como se faz.
+
+   ★★★★★ O ARQUIVO SOBE, MAS NUNCA DESCE. Nenhuma rota devolve o certificado
+   nem a senha, e esta tela nao tem como mostrar nenhum dos dois nem para
+   quem esta logado como super ADM. O que ela mostra e: de quem e, ate quando
+   vale, e se o banco aceita.
+
+   ★★★★ ERRO EM VERMELHO, SOZINHO, E PRIMEIRO. Erro grudado com aviso
+   informativo vira um paragrafo so, e a pessoa le como instrucao o que era
+   para ela ler como problema. Cada um na sua caixa.
+
+   ★★★ SEM confirm, alert E prompt NATIVOS. Nenhum deles e traduzivel, nenhum
+   obedece o tema, e todos travam a aba. */
+
+if (!Sessao.exigir()) throw new Error('sem sessao');
+
+const el = (id) => document.getElementById(id);
+const usuario = Sessao.usuario();
+Menu.montar('integracoes');
+el('tituloTela').textContent = t('int.titulo');
+
+/* ── estado da tela ───────────────────────────────────────────────────── */
+let dados = null;
+let aba = 'sicoob';
+let escolhido = null;      /* { nome, base64, bytes } */
+let erro = '';
+let recado = null;         /* { tom: 'certo' | 'atencao', texto } */
+let ocupado = '';          /* '' | 'enviando' | 'testando' */
+
+/* ★★ Texto que vem do certificado (titular, CNPJ) e dado de fora: entra
+   escapado, sempre. */
+function esc(v) {
+  return String(v == null ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+const TRACO = '—';   /* campo sem valor: o traco sozinho fica, e marca de "sem informacao" */
+
+function emData(iso) {
+  if (!iso) return TRACO;
+  try {
+    return new Date(iso).toLocaleDateString(Idioma.escolhido(), {
+      day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'America/Sao_Paulo',
+    });
+  } catch (e) { return TRACO; }
+}
+function emDataHora(iso) {
+  if (!iso) return TRACO;
+  try {
+    return new Date(iso).toLocaleString(Idioma.escolhido(), {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo',
+    });
+  } catch (e) { return TRACO; }
+}
+function emCnpj(v) {
+  const d = String(v || '').replace(/\D/g, '');
+  if (d.length !== 14) return d || TRACO;
+  return d.slice(0, 2) + '.' + d.slice(2, 5) + '.' + d.slice(5, 8) + '/' + d.slice(8, 12) + '-' + d.slice(12);
+}
+function emBytes(n) {
+  if (!n && n !== 0) return TRACO;
+  return n < 1024 ? n + ' B' : (n / 1024).toFixed(1).replace('.', ',') + ' kB';
+}
+
+/* ── os desenhos pequenos ─────────────────────────────────────────────── */
+function icone(caminho, tamanho) {
+  return '<svg width="' + (tamanho || 16) + '" height="' + (tamanho || 16) + '" viewBox="0 0 24 24" ' +
+    'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ' +
+    'style="flex:0 0 auto">' + caminho + '</svg>';
+}
+const ICO = {
+  alerta: '<circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path>',
+  certo: '<path d="M20 6L9 17l-5-5"></path>',
+  relogio: '<circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 2"></path>',
+  envio: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><path d="M17 8l-5-5-5 5"></path><path d="M12 3v12"></path>',
+  arquivo: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path>',
+  raio: '<path d="M13 2L3 14h9l-1 8 10-12h-9z"></path>',
+};
+
+function caixa(tom, titulo, texto) {
+  return '<div class="aviso aviso-' + tom + '">' +
+    icone(tom === 'erro' ? ICO.alerta : (tom === 'certo' ? ICO.certo : ICO.alerta), 18) +
+    '<div>' + (titulo ? '<strong>' + esc(titulo) + '</strong><br>' : '') + esc(texto) + '</div></div>';
+}
+
+function linha(rotulo, valor, classe) {
+  return '<div class="linha"><span class="rot">' + esc(rotulo) + '</span>' +
+    '<span class="val ' + (classe || '') + '">' + (valor === TRACO ? TRACO : esc(valor)) + '</span></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AS ABAS
+   ═══════════════════════════════════════════════════════════════════════════ */
+function pontoDe(parte) {
+  if (!parte) return '';
+  return parte.pronto ? 'bom' : 'falta';
+}
+
+function desenharAbas() {
+  const d = dados || {};
+  const lista = [
+    ['sicoob', t('int.aba_sicoob'), pontoDe(d.sicoob)],
+    ['asaas', t('int.aba_asaas'), pontoDe(d.asaas)],
+    ['whatsapp', t('int.aba_whatsapp'), pontoDe(d.whatsapp)],
+    ['google', t('int.aba_google'), pontoDe(d.google)],
+  ];
+  return '<div class="abas">' + lista.map(function (x) {
+    return '<button type="button" class="aba' + (aba === x[0] ? ' ativa' : '') + '" data-aba="' + x[0] + '">' +
+      '<span class="ponto ' + x[2] + '"></span>' + esc(x[1]) + '</button>';
+  }).join('') + '</div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   A ABA DO SICOOB · o certificado
+   ═══════════════════════════════════════════════════════════════════════════ */
+function abaSicoob() {
+  const s = (dados && dados.sicoob) || {};
+  const c = s.certificado || {};
+  let html = '';
+
+  /* ★★★★ O ESTADO DO CERTIFICADO, ANTES DO FORMULARIO. Quem abre esta tela
+     quase sempre quer saber "esta de pe?", e so as vezes quer trocar. */
+  if (c.registrado || c.arquivo_no_disco) {
+    if (c.vencido) {
+      html += caixa('erro', null, t('int.vencido'));
+    } else if (c.vence_logo) {
+      html += caixa('atencao', null, t('int.vence_logo'));
+    }
+
+    html += '<div class="cartao">' +
+      '<div class="cartao-titulo">' + t('int.cert') + '</div>' +
+      '<div class="cartao-sub">' + t('int.cert_sub') + '</div>' +
+      '<div class="dados">' +
+        linha(t('int.titular'), c.titular || TRACO) +
+        linha(t('int.documento'), c.documento ? emCnpj(c.documento) : TRACO) +
+        linha(t('int.vale_de'), emData(c.valido_de)) +
+        linha(t('int.vale_ate'), emData(c.valido_ate)) +
+        linha(t('int.dias_restantes'), c.dias_para_vencer == null ? TRACO : String(c.dias_para_vencer)) +
+        linha(t('int.enviado_por'), c.enviado_por || TRACO) +
+        linha(t('int.enviado_em'), emDataHora(c.enviado_em)) +
+        linha(t('int.tamanho'), emBytes(c.bytes)) +
+        linha(t('int.digital'), c.digital || TRACO, 'mono') +
+      '</div>' +
+      '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">' +
+        '<button type="button" class="btn btn-secundario" id="btTestar"' + (ocupado ? ' disabled' : '') + '>' +
+          icone(ICO.raio) + (ocupado === 'testando' ? t('int.testando') : t('int.testar')) + '</button>' +
+      '</div>' +
+      '<div class="cartao-sub" style="margin:10px 0 0">' + t('int.teste_sub') + '</div>' +
+    '</div>';
+  } else {
+    html += '<div class="cartao">' +
+      '<div class="cartao-titulo">' + t('int.sem_cert') + '</div>' +
+      '<div class="cartao-sub">' + t('int.sem_cert_sub') + '</div>' +
+    '</div>';
+  }
+
+  /* ── o envio ───────────────────────────────────────────────────────── */
+  html += '<div class="cartao">' +
+    '<div class="cartao-titulo">' + ((c.registrado || c.arquivo_no_disco) ? t('int.trocar') : t('int.cert')) + '</div>' +
+    '<div class="campo" style="margin-top:14px">' +
+      '<label>' + t('int.arquivo') + '</label>' +
+      '<label class="arquivo">' +
+        icone(ICO.arquivo, 20) +
+        '<span class="nome' + (escolhido ? '' : ' vazio') + '">' +
+          (escolhido ? esc(escolhido.nome) + '  (' + emBytes(escolhido.bytes) + ')' : t('int.nenhum')) +
+        '</span>' +
+        '<span class="btn btn-secundario" style="pointer-events:none">' + t('int.escolher') + '</span>' +
+        '<input type="file" id="arq" accept=".pfx,.p12,application/x-pkcs12">' +
+      '</label>' +
+      '<div class="ajuda">' + t('int.arquivo_ajuda') + '</div>' +
+    '</div>' +
+    '<div class="campo">' +
+      '<label for="senha">' + t('int.senha') + '</label>' +
+      '<input type="password" id="senha" autocomplete="new-password" spellcheck="false">' +
+      '<div class="ajuda">' + t('int.senha_ajuda') + '</div>' +
+    '</div>' +
+    '<button type="button" class="btn btn-principal" id="btEnviar"' + (ocupado ? ' disabled' : '') + '>' +
+      icone(ICO.envio) + (ocupado === 'enviando' ? t('int.enviando') : t('int.enviar')) + '</button>' +
+  '</div>';
+
+  /* ── os outros dois pes, que continuam no servidor ─────────────────── */
+  html += '<div class="cartao">' +
+    '<div class="dados">' +
+      linha(t('int.client_id'), s.client_id ? t('int.no_servidor') : t('int.falta_servidor'),
+            s.client_id ? '' : 'fraco') +
+      linha(t('int.chave_pix'), s.chave_pix ? t('int.no_servidor') : t('int.falta_servidor'),
+            s.chave_pix ? '' : 'fraco') +
+    '</div>' +
+  '</div>';
+
+  /* ── o historico ───────────────────────────────────────────────────── */
+  html += '<div class="cartao">' +
+    '<div class="cartao-titulo">' + t('int.historico') + '</div>' +
+    (historico.length
+      ? '<div class="dados" style="margin-top:12px">' + historico.map(function (h) {
+          return '<div class="linha"><span class="rot">' + emDataHora(h.enviado_em) + '</span>' +
+            '<span class="val">' + esc(h.titular || TRACO) + '  ' +
+            '<span class="etiqueta ' + (h.ativo ? 'et-aceita' : 'et-substituida') + '">' +
+            (h.ativo ? t('int.em_uso') : t('int.substituido')) + '</span></span></div>';
+        }).join('') + '</div>'
+      : '<div class="cartao-sub">' + t('int.sem_historico') + '</div>') +
+  '</div>';
+
+  return html;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AS OUTRAS ABAS · so leitura
+   ═══════════════════════════════════════════════════════════════════════════ */
+function abaAsaas() {
+  const a = (dados && dados.asaas) || {};
+  let html = '';
+  /* ★★★★ CHAVE PELA METADE NAO E CHAVE FALTANDO, e o conserto e noutro
+     lugar. Dizer so "falta configurar" aqui mandaria procurar no painel do
+     provedor um problema que esta no arquivo de configuracao do servidor. */
+  if (a.preenchida && a.inteira === false) html += caixa('erro', null, t('int.asaas_cortada'));
+  return html + '<div class="cartao"><div class="dados">' +
+    linha(t('int.asaas_chave'), a.preenchida && a.inteira ? t('int.no_servidor') : t('int.falta_servidor'),
+          a.preenchida && a.inteira ? '' : 'fraco') +
+    linha(t('int.asaas_ambiente'), a.ambiente || TRACO) +
+    linha(t('int.asaas_webhook'), a.webhook_token ? t('int.no_servidor') : t('int.falta_servidor'),
+          a.webhook_token ? '' : 'fraco') +
+  '</div></div>';
+}
+
+function abaWhatsapp() {
+  const w = (dados && dados.whatsapp) || {};
+  return '<div class="cartao"><div class="dados">' +
+    linha(t('int.whats_instancia'), w.instancia || TRACO, w.instancia ? '' : 'fraco') +
+    linha(t('int.whats_chave'), w.chave ? t('int.no_servidor') : t('int.falta_servidor'), w.chave ? '' : 'fraco') +
+  '</div></div>';
+}
+
+function abaGoogle() {
+  const g = (dados && dados.google) || {};
+  return '<div class="cartao"><div class="dados">' +
+    linha(t('int.google_id'), g.client_id ? t('int.no_servidor') : t('int.falta_servidor'), g.client_id ? '' : 'fraco') +
+  '</div></div>';
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   O DESENHO
+   ═══════════════════════════════════════════════════════════════════════════ */
+let historico = [];
+
+function desenhar() {
+  let html = '<div class="faixa-painel">' +
+    '<h2>' + t('int.titulo') + '</h2><p>' + t('int.sub') + '</p></div>';
+
+  html += desenharAbas();
+
+  /* ★★★★★ O ERRO VEM PRIMEIRO E SOZINHO. Esta ordem e a regra, nao gosto:
+     quem bate o olho na tela tem de achar o problema antes de qualquer
+     outra coisa escrita. */
+  if (erro) html += caixa('erro', null, erro);
+  if (recado) html += caixa(recado.tom, null, recado.texto);
+
+  if (aba === 'sicoob') html += abaSicoob();
+  else if (aba === 'asaas') html += abaAsaas();
+  else if (aba === 'whatsapp') html += abaWhatsapp();
+  else html += abaGoogle();
+
+  html += '<div class="cartao-sub" style="margin-top:18px">' + t('int.so_leitura') + '</div>';
+
+  el('area').innerHTML = html;
+  ligar();
+}
+
+function ligar() {
+  document.querySelectorAll('.aba').forEach(function (b) {
+    b.addEventListener('click', function () {
+      aba = b.getAttribute('data-aba');
+      erro = ''; recado = null;
+      desenhar();
+    });
+  });
+
+  const arq = el('arq');
+  if (arq) arq.addEventListener('change', pegarArquivo);
+
+  const btEnviar = el('btEnviar');
+  if (btEnviar) btEnviar.addEventListener('click', enviar);
+
+  const btTestar = el('btTestar');
+  if (btTestar) btTestar.addEventListener('click', function () { testar(true); });
+}
+
+/* ── o arquivo escolhido vira base64 aqui mesmo ────────────────────────── */
+/* ★★★ EM BASE64 DENTRO DO JSON, e nao em multipart: um .pfx tem poucos
+   kilobytes, a rota ja le JSON, e assim nao entra biblioteca nova no
+   caminho do dinheiro so para receber um arquivo pequeno. */
+function pegarArquivo(ev) {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) { escolhido = null; desenhar(); return; }
+
+  const leitor = new FileReader();
+  leitor.onerror = function () {
+    erro = t('int.arquivo_ajuda');
+    escolhido = null;
+    desenhar();
+  };
+  leitor.onload = function () {
+    const todo = String(leitor.result || '');
+    escolhido = { nome: f.name, bytes: f.size, base64: todo.slice(todo.indexOf(',') + 1) };
+    erro = '';
+    desenhar();
+    const s = el('senha');
+    if (s) s.focus();
+  };
+  leitor.readAsDataURL(f);
+}
+
+async function enviar() {
+  const senha = (el('senha') && el('senha').value) || '';
+  erro = ''; recado = null;
+
+  if (!escolhido) { erro = t('int.nenhum'); desenhar(); return; }
+  if (!senha) { erro = t('int.senha'); desenhar(); return; }
+
+  ocupado = 'enviando';
+  desenhar();
+
+  try {
+    const r = await chamar('/plataforma/certificado', {
+      method: 'POST',
+      body: JSON.stringify({
+        arquivo_base64: escolhido.base64,
+        nome: escolhido.nome,
+        senha: senha,
+        provedor: 'sicoob',
+      }),
+    });
+    escolhido = null;
+    ocupado = '';
+    await carregar(false);
+    recado = { tom: 'certo', texto: t('int.enviado_ok') };
+    desenhar();
+
+    /* ★★★★ O TESTE SAI SOZINHO DEPOIS DO ENVIO. A pergunta que a pessoa tem
+       na cabeca nao e "subiu?", e "funciona?". Fazer ela clicar num segundo
+       botao para descobrir isso e cobrar um passo que o sistema pode dar. */
+    testar(false);
+  } catch (e) {
+    ocupado = '';
+    erro = e.message;
+    desenhar();
+  }
+}
+
+async function testar(avisarAntes) {
+  if (avisarAntes) { erro = ''; recado = null; }
+  ocupado = 'testando';
+  desenhar();
+  try {
+    await chamar('/plataforma/certificado/testar', { method: 'POST', body: '{}' });
+    ocupado = '';
+    recado = { tom: 'certo', texto: t('int.teste_ok') };
+    erro = '';
+    desenhar();
+  } catch (e) {
+    ocupado = '';
+    /* ★★★ O motivo que o banco devolveu aparece como esta, traduzido pela
+       rota, e nunca trocado por um texto nosso dizendo que nao sabemos
+       explicar. */
+    erro = e.message;
+    desenhar();
+  }
+}
+
+/* ── carregar ──────────────────────────────────────────────────────────── */
+async function carregar(redesenhar) {
+  try {
+    dados = await chamar('/plataforma/integracoes');
+    const h = await chamar('/plataforma/certificado');
+    historico = (h && h.historico) || [];
+    if (redesenhar !== false) desenhar();
+  } catch (e) {
+    /* ★★★ 403 aqui quer dizer que quem abriu nao e super ADM. A tela nao e a
+       protecao, o servidor e; isto so explica, em vez de deixar a tela em
+       branco parecendo defeito. */
+    dados = null;
+    erro = e.message;
+    if (redesenhar !== false) desenhar();
+  }
+}
+
+carregar(true);
+</script>
+</body>
+</html>
