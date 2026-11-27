@@ -45,15 +45,11 @@
 
 /* ── area do Google ──────────────────────────────────────────────────────── */
 .lc-google-area{ margin-bottom:18px; }
-.btn-google{
-  width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:11px;
-  background: var(--superficie-2); color: var(--texto);
-  border:1px solid var(--borda-forte); border-radius: var(--raio-p);
-  font-size:14.5px; font-weight:600; font-family:inherit; cursor:pointer;
-  transition: var(--transicao);
-}
-.btn-google:hover:not(:disabled){ background: var(--superficie-3); border-color: var(--violeta-800); }
-.btn-google:disabled{ opacity:.5; cursor:not-allowed; }
+/* ★★ altura reservada antes de o Google desenhar: sem isto a tela pula
+   quando o botao chega, e pulo de layout parece defeito. */
+.lc-google-alvo{ min-height:44px; display:flex; justify-content:center; }
+.lc-google-alvo > div{ width:100% !important; }
+.lc-google-alvo iframe{ margin:0 !important; }
 .lc-google-ou{
   display:flex; align-items:center; gap:12px; margin:16px 0 2px;
   font-size:12px; color: var(--texto-3);
@@ -151,16 +147,13 @@
       <div id="caixaEntrar">
         <div class="login-subtitle">Entre na sua conta</div>
 
-        <div class="lc-google-area">
-          <button type="button" class="btn-google" id="googleEntrar">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </svg>
-            Continuar com o Google
-          </button>
+        <div class="lc-google-area" data-google-caixa="loginFormBox">
+          <!-- ★★★★ O BOTAO E DESENHADO PELO PROPRIO GOOGLE aqui dentro.
+               Um botao nosso chamando `prompt()` depende do One Tap, que o
+               Google suprime em silencio (cooldown, cookie de terceiro,
+               configuracao do navegador): o clique nao faz nada e nao ha
+               erro no console para investigar. Mesmo caminho do Lider 10. -->
+          <div class="lc-google-alvo" id="googleEntrar"></div>
           <div class="lc-google-ou"><i></i><span>ou</span><i></i></div>
         </div>
 
@@ -200,16 +193,13 @@
           Voce usa o sistema inteiro durante o teste e decide depois.
         </div>
 
-        <div class="lc-google-area">
-          <button type="button" class="btn-google" id="googleCriar">
-            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </svg>
-            Continuar com o Google
-          </button>
+        <div class="lc-google-area" data-google-caixa="cadastroFormBox">
+          <!-- ★★★★ O BOTAO E DESENHADO PELO PROPRIO GOOGLE aqui dentro.
+               Um botao nosso chamando `prompt()` depende do One Tap, que o
+               Google suprime em silencio (cooldown, cookie de terceiro,
+               configuracao do navegador): o clique nao faz nada e nao ha
+               erro no console para investigar. Mesmo caminho do Lider 10. -->
+          <div class="lc-google-alvo" id="googleCriar"></div>
           <div class="lc-google-ou"><i></i><span>ou</span><i></i></div>
         </div>
 
@@ -408,12 +398,8 @@ el('btnCriar').addEventListener('click', criar);
    layout ja nasce no lugar definitivo e ligar depois nao mexe em posicao
    nenhuma. A frase diz o que fazer agora, em vez de so avisar que nao da. */
 // ═══════════════════════════════════════════════════════════════════════
-// ENTRAR PELO GOOGLE
+// ENTRAR PELO GOOGLE · mesmo caminho do Lider 10
 // ═══════════════════════════════════════════════════════════════════════
-// ★★★★ O BOTAO SO LIGA DEPOIS QUE A BIBLIOTECA DO GOOGLE CARREGA. Ela vem
-//   com `async defer`, entao nos primeiros instantes da pagina ela nao
-//   existe. Clicar nesse vao daria erro de script, e para quem esta olhando
-//   o botao simplesmente nao faria nada.
 let googlePronto = false;
 
 function ligarGoogle(){
@@ -425,30 +411,60 @@ function ligarGoogle(){
       callback: entrarComGoogle,
       ux_mode: 'popup',
       auto_select: false,
+      cancel_on_tap_outside: true,
     });
     googlePronto = true;
     return true;
   } catch (e) { return false; }
 }
 
-// tenta ligar assim que a biblioteca chegar, sem travar a pagina
+// ★★★ A LARGURA VAI MEDIDA, nao chutada: o Google desenha num iframe de
+//   largura fixa, entao sem medir o botao fica mais estreito que o resto do
+//   formulario e a coluna perde o alinhamento.
+function desenharGoogle(forcar){
+  if (!ligarGoogle()) return;
+  document.querySelectorAll('.lc-google-area').forEach(function (area) {
+    const alvo = area.querySelector('.lc-google-alvo');
+    if (!alvo) return;
+    const visivel = area.style.display;
+    area.style.display = '';
+    let larg = 0;
+    try { larg = Math.round(area.getBoundingClientRect().width) || 0; } catch (e) {}
+    if (!larg) { area.style.display = visivel; return; }
+    larg = Math.max(200, Math.min(400, larg));
+    if (!forcar && alvo.getAttribute('data-larg') === String(larg) && alvo.childElementCount) return;
+    alvo.innerHTML = '';
+    alvo.setAttribute('data-larg', String(larg));
+    try {
+      google.accounts.id.renderButton(alvo, {
+        type: 'standard',
+        theme: 'filled_black',   // o painel e escuro
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'left',
+        locale: 'pt-BR',
+        width: larg,
+      });
+    } catch (e) { console.warn('[google] nao foi possivel desenhar o botao: ' + (e && e.message)); }
+  });
+}
+
+// espera a biblioteca chegar (ela vem com async defer) sem travar a pagina
 (function esperarGoogle(tentativa){
-  if (ligarGoogle()) return;
+  if (window.google && google.accounts && google.accounts.id) { desenharGoogle(true); return; }
   if ((tentativa || 0) > 40) return;          // ~8s e desiste em silencio
   setTimeout(() => esperarGoogle((tentativa || 0) + 1), 200);
 })(0);
 
-let ondeAvisar = 'erroEntrar';
+// ★★ redesenhar quando a largura muda, senao o botao fica do tamanho de antes
+let redesenho;
+window.addEventListener('resize', function () {
+  clearTimeout(redesenho);
+  redesenho = setTimeout(() => desenharGoogle(false), 180);
+});
 
-function pedirGoogle(onde){
-  ondeAvisar = onde;
-  if (!ligarGoogle()) {
-    recado(onde, 'A entrada pelo Google ainda esta carregando. Tente de novo em instantes ou use o e-mail e a senha.');
-    return;
-  }
-  limpar(onde);
-  google.accounts.id.prompt();
-}
+let ondeAvisar = 'erroEntrar';
 
 async function entrarComGoogle(resposta){
   const onde = ondeAvisar;
@@ -459,9 +475,7 @@ async function entrarComGoogle(resposta){
   // ★★★ `ocupado` troca o innerHTML inteiro, e este botao tem o logo do
   //   Google em SVG dentro. Sem guardar o original, um erro deixaria o botao
   //   so com texto, sem o logo, pelo resto da visita.
-  const botao = el(onde === 'erroCriar' ? 'googleCriar' : 'googleEntrar');
-  const marcaOriginal = botao.innerHTML;
-  ocupado(botao, true, 'Entrando');
+  recado(onde, 'Entrando com o Google...');
   try {
     const r = await chamar('/auth/google', {
       method: 'POST',
@@ -472,13 +486,9 @@ async function entrarComGoogle(resposta){
     //   seguinte pede isso antes de soltar a pessoa no sistema.
     window.location.href = r.completar ? '../completar/' : '../';
   } catch (e) {
-    botao.disabled = false;
-    botao.innerHTML = marcaOriginal;
     erro(onde, e.message);
   }
 }
-el('googleEntrar').addEventListener('click', ()=> pedirGoogle('erroEntrar'));
-el('googleCriar').addEventListener('click', ()=> pedirGoogle('erroCriar'));
 
 el('linkEsqueci').addEventListener('click', function(e){
   e.preventDefault();
