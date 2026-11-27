@@ -10,20 +10,20 @@
 'use strict';
 
 const MENU = [
-  { grupo: 'Comercial' },
-  { id:'inicio',        nome:'Inicio',        papeis:'*' },
-  { id:'oportunidades', nome:'Oportunidades', papeis:'*' },
-  { id:'propostas',     nome:'Propostas',     papeis:'*', pronto: false },
-  { grupo: 'Configuracao' },
-  { id:'catalogo',      nome:'Catalogo',      papeis:['super_adm','dono','gestor'], pronto: false },
-  { id:'comissoes',     nome:'Comissoes',     papeis:['super_adm','dono','gestor'], pronto: false },
-  { id:'equipe',        nome:'Equipe',        papeis:['super_adm','dono'], pronto: false },
-  { grupo: 'Plataforma', papeis:['super_adm'] },
-  { id:'contas',        nome:'Contas',        papeis:['super_adm'], pronto: false },
-  { id:'planos',        nome:'Planos',        papeis:['super_adm'], pronto: false },
-  { id:'tickets',       nome:'Tickets',       papeis:['super_adm'], pronto: false },
-  { id:'disparos',      nome:'Mensagens',     papeis:['super_adm'], pronto: false },
-  { id:'saude',         nome:'Saude',         papeis:['super_adm'], pronto: false },
+  { grupo: 'comercial' },
+  { id:'inicio',        papeis:'*' },
+  { id:'oportunidades', papeis:'*' },
+  { id:'propostas',     papeis:'*', pronto: false },
+  { grupo: 'configuracao' },
+  { id:'catalogo',      papeis:['super_adm','dono','gestor'], pronto: false },
+  { id:'comissoes',     papeis:['super_adm','dono','gestor'], pronto: false },
+  { id:'equipe',        papeis:['super_adm','dono'], pronto: false },
+  { grupo: 'plataforma', papeis:['super_adm'] },
+  { id:'contas',        papeis:['super_adm'], pronto: false },
+  { id:'planos',        papeis:['super_adm'], pronto: false },
+  { id:'tickets',       papeis:['super_adm'], pronto: false },
+  { id:'disparos',      papeis:['super_adm'], pronto: false },
+  { id:'saude',         papeis:['super_adm'], pronto: false },
 ];
 
 const ICONES = {
@@ -57,7 +57,7 @@ const Menu = {
     for (const it of MENU) {
       if (it.grupo) {
         if (it.papeis && it.papeis.indexOf(papel) < 0) continue;
-        html += '<div class="sb-grupo">' + it.grupo + '</div>';
+        html += '<div class="sb-grupo">' + t('menu.' + it.grupo) + '</div>';
         continue;
       }
       if (it.papeis !== '*' && it.papeis.indexOf(papel) < 0) continue;
@@ -71,19 +71,19 @@ const Menu = {
       //   com a palavra "em breve" ela entende que e so o que falta chegar.
       if (it.pronto === false) {
         html += '<div class="sb-item sb-em-breve" title="em breve">' + icone +
-                it.nome + '<span class="sb-breve">em breve</span></div>';
+                t('menu.' + it.id) + '<span class="sb-breve">' + t('menu.embreve') + '</span></div>';
         continue;
       }
 
       const destino = it.id === 'inicio' ? base : base + it.id + '/';
       html += '<a href="' + destino + '" class="sb-item' + (it.id === atual ? ' ativo' : '') + '">' +
-        icone + it.nome + '</a>';
+        icone + t('menu.' + it.id) + '</a>';
     }
 
     const u = Sessao.usuario();
     const nome = u.nome || 'Usuario';
     const iniciais = nome.split(/\s+/).slice(0, 2).map((p) => p[0] || '').join('').toUpperCase() || '?';
-    const PAPEL = { super_adm:'Super ADM', dono:'Dono da conta', gestor:'Gestor', closer:'Closer', sdr:'SDR' };
+    const papelNaTela = t('papel.' + (u.papel || 'closer'));
 
     document.getElementById('sidebar').innerHTML =
       '<div class="sb-marca"><img src="' + base + 'assets/logo-128.png" alt="">' +
@@ -92,11 +92,21 @@ const Menu = {
       '<div class="sb-rodape">' +
         '<div class="sb-pessoa"><div class="bolha">' + iniciais + '</div>' +
           '<div><div class="quem">' + nome + '</div>' +
-          '<div class="papel">' + (PAPEL[u.papel] || u.papel || '') + '</div></div></div>' +
+          '<div class="papel">' + papelNaTela + '</div></div></div>' +
         '<div class="sb-item" id="menuSair">' +
           '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
-          '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>Sair</div>' +
+          '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' + t('menu.sair') + '</div>' +
+        '<div class="sb-idiomas">' +
+          Idioma.IDIOMAS.map(function (i) {
+            return '<button class="sb-lang' + (i.id === Idioma.escolhido() ? ' atual' : '') +
+                   '" data-lang="' + i.id + '" title="' + i.nome + '">' + i.bandeira + '</button>';
+          }).join('') +
+        '</div>' +
       '</div>';
+
+    document.querySelectorAll('.sb-lang').forEach(function (b) {
+      b.addEventListener('click', () => Idioma.trocar(b.dataset.lang));
+    });
 
     document.getElementById('menuSair').addEventListener('click', async function () {
       try { await chamar('/auth/sair', { method: 'POST' }); } catch (e) {}

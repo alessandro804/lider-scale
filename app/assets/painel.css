@@ -134,3 +134,17 @@ a.sb-item{ text-decoration:none; }
   text-transform:uppercase; color: var(--texto-3);
   border:1px solid var(--borda); border-radius:100px; padding:1px 7px;
 }
+
+/* ── o seletor de idioma, no pe da lateral ──────────────────────────────── */
+.sb-idiomas{ display:flex; gap:6px; padding:4px 12px 2px; }
+.sb-lang{
+  flex:1; padding:5px 0; font-size:11px; font-weight:700; letter-spacing:.04em;
+  font-family:inherit; cursor:pointer; border-radius:7px;
+  background: var(--superficie-2); color: var(--texto-3);
+  border:1px solid var(--borda); transition: var(--transicao);
+}
+.sb-lang:hover{ color: var(--texto); border-color: var(--borda-forte); }
+.sb-lang.atual{
+  background: rgba(120,44,251,.18); color: var(--violeta-200);
+  border-color: rgba(120,44,251,.4);
+}

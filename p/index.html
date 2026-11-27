@@ -132,7 +132,54 @@ body{
 }
 @keyframes brilho{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
 
+
+/* ── o aceite ── */
+.aceitar{ border-top:1px solid var(--borda); padding:24px 30px 28px; }
+.aceitar h3{ font-size:16px; font-weight:700; margin-bottom:5px; }
+.aceitar .sub{ font-size:13.5px; color: var(--tinta-2); margin-bottom:17px; }
+.campo-a{ margin-bottom:13px; }
+.campo-a label{ display:block; font-size:13px; font-weight:620; margin-bottom:6px; }
+.campo-a input[type=text]{
+  width:100%; padding:11px 14px; font-size:15px; font-family:inherit;
+  border:1px solid var(--borda); border-radius: var(--raio-p);
+  background: var(--papel); color: var(--tinta);
+}
+.campo-a input[type=text]:focus{
+  outline:none; border-color: var(--violeta); box-shadow:0 0 0 3px rgba(120,44,251,.15);
+}
+.concordo{ display:flex; gap:10px; align-items:flex-start; margin:15px 0 18px; cursor:pointer; }
+.concordo input{ width:18px; height:18px; margin-top:2px; flex:0 0 auto; accent-color: var(--violeta); }
+.concordo span{ font-size:13.5px; color: var(--tinta-2); line-height:1.5; }
+.btn-aceitar{
+  width:100%; padding:14px; font-size:15.5px; font-weight:680; font-family:inherit;
+  background: var(--violeta); color:#fff; border:none; border-radius: var(--raio-p);
+  cursor:pointer; transition:.15s;
+}
+.btn-aceitar:hover:not(:disabled){ background: var(--violeta-escuro); }
+.btn-aceitar:disabled{ opacity:.55; cursor:not-allowed; }
+.erro-a{
+  background:#FDECEC; border:1px solid #F5C2C2; color: var(--vermelho);
+  border-radius: var(--raio-p); padding:12px 15px; font-size:13.5px; margin-bottom:14px;
+}
+.girando-a{
+  display:inline-block; width:13px; height:13px; border:2px solid rgba(255,255,255,.35);
+  border-top-color:#fff; border-radius:50%; animation: gira .7s linear infinite;
+  vertical-align:-1px; margin-right:7px;
+}
+@keyframes gira{ to{ transform: rotate(360deg); } }
+
+/* ── os tres idiomas ── */
+.idiomas{ display:flex; gap:7px; margin-top:16px; }
+.lang{
+  padding:5px 11px; font-size:12px; font-weight:600; font-family:inherit;
+  background:transparent; color: var(--tinta-3); cursor:pointer;
+  border:1px solid var(--borda); border-radius:100px; transition:.15s;
+}
+.lang:hover{ color: var(--tinta); border-color: var(--tinta-3); }
+.lang.atual{ background: var(--violeta-leve); color: var(--violeta-escuro); border-color: var(--violeta); }
+
 @media print{
+  .aceitar, .idiomas{ display:none; }
   body{ background:#fff; padding:0; }
   .folha{ border:none; box-shadow:none; max-width:none; }
 }
@@ -159,6 +206,120 @@ body{
 'use strict';
 const API = 'https://api.scale.lidercommerce.com.br';
 
+/* ═══════════════════════════════════════════════════════════════════════
+   OS TRES IDIOMAS
+   ═══════════════════════════════════════════════════════════════════════
+   ★★★★ ESTA PAGINA NAO CARREGA O idioma.js DO PAINEL, pelo mesmo motivo
+     que nao carrega o resto: quem a le nunca entrou no sistema, e cada
+     arquivo a mais e uma chance de abrir quebrada na frente de quem esta
+     decidindo gastar dinheiro. As frases daqui sao poucas e moram aqui.
+
+   ★★★ O IDIOMA SAI DO NAVEGADOR DE QUEM ABRE, nao de quem montou. Um
+     cliente nos Estados Unidos recebe o link em ingles sem ninguem ter de
+     lembrar de trocar nada. Os tres botoes no rodape mandam sobre isso.
+   ═══════════════════════════════════════════════════════════════════════ */
+const FRASES = {
+  pt: {
+    titulo: 'Proposta comercial',
+    de: 'Proposta de', aos_cuidados: 'Aos cuidados de', versao: 'Versao',
+    incluido: 'O que esta incluido', total: 'Total', unidades: 'unidades',
+    cobranca: 'cobranca', pagamento: 'Como fica o pagamento', entrada: 'entrada',
+    observacoes: 'Observacoes',
+    vale_ate: 'Esta proposta vale ate', venceu_em: 'Esta proposta venceu em',
+    venceu_fale: 'Fale com quem enviou para receber uma atualizada.',
+    aceita_em: 'Proposta aceita em', aceita_por: 'por',
+    aceitar: 'Aceitar esta proposta',
+    aceitar_sub: 'Ao aceitar, voce confirma os valores e as condicoes acima. O horario e o endereco de onde voce acessou ficam registrados.',
+    seu_nome: 'Seu nome completo', nome_dica: 'Como esta no documento',
+    seu_doc: 'Seu CPF ou o CNPJ da empresa',
+    concordo: 'Li a proposta inteira e concordo com os valores, as etapas e os prazos descritos nela.',
+    botao_aceitar: 'Aceitar proposta', registrando: 'Registrando',
+    falta_nome: 'Informe seu nome completo, como no documento.',
+    falta_doc: 'O CPF tem 11 numeros e o CNPJ tem 14. Confira o que foi digitado.',
+    falta_marcar: 'Marque a confirmacao de que leu e concorda com a proposta.',
+    sem_link: 'Link incompleto', sem_link_sub: 'Confira se o endereco foi copiado inteiro, ate o fim.',
+    indisponivel: 'Esta proposta nao esta disponivel',
+    indisponivel_sub: 'O link pode ter expirado ou sido substituido por uma versao mais nova. Fale com quem enviou.',
+    sem_rede: 'Nao foi possivel abrir a proposta',
+    sem_rede_sub: 'Confira sua conexao com a internet e tente de novo em instantes.',
+    erro_aceite: 'Nao foi possivel registrar o aceite agora. Tente de novo em instantes.',
+    erro_rede_aceite: 'Nao foi possivel falar com o sistema. Confira sua conexao com a internet e tente de novo em instantes.',
+  },
+  en: {
+    titulo: 'Business proposal',
+    de: 'Proposal from', aos_cuidados: 'Attn:', versao: 'Version',
+    incluido: "What's included", total: 'Total', unidades: 'units',
+    cobranca: 'billed', pagamento: 'Payment schedule', entrada: 'deposit',
+    observacoes: 'Notes',
+    vale_ate: 'This proposal is valid until', venceu_em: 'This proposal expired on',
+    venceu_fale: 'Contact whoever sent it to get an updated one.',
+    aceita_em: 'Proposal accepted on', aceita_por: 'by',
+    aceitar: 'Accept this proposal',
+    aceitar_sub: 'By accepting, you confirm the amounts and conditions above. The time and the address you accessed from are recorded.',
+    seu_nome: 'Your full name', nome_dica: 'As it appears on your ID',
+    seu_doc: 'Your tax ID',
+    concordo: 'I have read the entire proposal and agree with the amounts, stages and deadlines described in it.',
+    botao_aceitar: 'Accept proposal', registrando: 'Recording',
+    falta_nome: 'Enter your full name, as it appears on your ID.',
+    falta_doc: 'Check the tax ID you entered.',
+    falta_marcar: 'Tick the box confirming you read and agree with the proposal.',
+    sem_link: 'Incomplete link', sem_link_sub: 'Check whether the whole address was copied, all the way to the end.',
+    indisponivel: 'This proposal is not available',
+    indisponivel_sub: 'The link may have expired or been replaced by a newer version. Contact whoever sent it.',
+    sem_rede: 'Could not open the proposal',
+    sem_rede_sub: 'Check your internet connection and try again in a moment.',
+    erro_aceite: 'Could not record your acceptance right now. Try again in a moment.',
+    erro_rede_aceite: 'Could not reach the system. Check your internet connection and try again in a moment.',
+  },
+  es: {
+    titulo: 'Propuesta comercial',
+    de: 'Propuesta de', aos_cuidados: 'A la atencion de', versao: 'Version',
+    incluido: 'Que incluye', total: 'Total', unidades: 'unidades',
+    cobranca: 'cobro', pagamento: 'Como queda el pago', entrada: 'anticipo',
+    observacoes: 'Observaciones',
+    vale_ate: 'Esta propuesta vale hasta', venceu_em: 'Esta propuesta vencio el',
+    venceu_fale: 'Habla con quien la envio para recibir una actualizada.',
+    aceita_em: 'Propuesta aceptada el', aceita_por: 'por',
+    aceitar: 'Aceptar esta propuesta',
+    aceitar_sub: 'Al aceptar, confirmas los valores y las condiciones de arriba. La hora y la direccion desde donde accediste quedan registradas.',
+    seu_nome: 'Tu nombre completo', nome_dica: 'Como figura en el documento',
+    seu_doc: 'Tu identificacion fiscal',
+    concordo: 'Lei la propuesta entera y estoy de acuerdo con los valores, las etapas y los plazos descritos en ella.',
+    botao_aceitar: 'Aceptar propuesta', registrando: 'Registrando',
+    falta_nome: 'Indica tu nombre completo, como figura en el documento.',
+    falta_doc: 'Revisa la identificacion fiscal que escribiste.',
+    falta_marcar: 'Marca la confirmacion de que leiste y estas de acuerdo con la propuesta.',
+    sem_link: 'Enlace incompleto', sem_link_sub: 'Revisa si el enlace fue copiado entero, hasta el final.',
+    indisponivel: 'Esta propuesta no esta disponible',
+    indisponivel_sub: 'El enlace puede haber vencido o haber sido reemplazado por una version mas nueva. Habla con quien lo envio.',
+    sem_rede: 'No fue posible abrir la propuesta',
+    sem_rede_sub: 'Revisa tu conexion a internet e intenta de nuevo en instantes.',
+    erro_aceite: 'No fue posible registrar la aceptacion ahora. Intenta de nuevo en instantes.',
+    erro_rede_aceite: 'No fue posible hablar con el sistema. Revisa tu conexion a internet e intenta de nuevo en instantes.',
+  },
+};
+
+const CHAVE_IDIOMA = 'scale_idioma_proposta';
+function idiomaAtual(){
+  const g = localStorage.getItem(CHAVE_IDIOMA);
+  if (g && FRASES[g]) return g;
+  const n = String(navigator.language || 'pt').slice(0, 2).toLowerCase();
+  return FRASES[n] ? n : 'pt';
+}
+function f(chave){
+  const L = FRASES[idiomaAtual()];
+  return (L && L[chave] != null) ? L[chave] : FRASES.pt[chave];
+}
+function trocarIdioma(id){
+  if (!FRASES[id]) return;
+  localStorage.setItem(CHAVE_IDIOMA, id);
+  window.location.reload();
+}
+function localeDaData(){
+  return { pt: 'pt-BR', en: 'en-US', es: 'es-ES' }[idiomaAtual()] || 'pt-BR';
+}
+
+
 function texto(s){
   return String(s == null ? '' : s)
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
@@ -171,71 +332,173 @@ function recado(titulo, corpo){
       '<svg class="ico" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">' +
         '<circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>' +
       '<h2>' + texto(titulo) + '</h2><p>' + texto(corpo) + '</p>' +
+      seletorIdioma() +
     '</div>';
+  document.querySelectorAll('.lang').forEach(function (b) {
+    b.addEventListener('click', () => trocarIdioma(b.dataset.l));
+  });
 }
 
 function dataBR(iso){
   if (!iso) return '';
   try {
-    return new Date(iso).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+    return new Date(iso).toLocaleDateString(localeDaData(), { day:'2-digit', month:'long', year:'numeric' });
   } catch (e) { return ''; }
+}
+
+/* ★★★★ O ACEITE SO APARECE QUANDO CABE. Proposta ja aceita, recusada ou
+   vencida nao mostra botao: botao que existe e nao funciona faz a pessoa
+   clicar, receber recusa e achar que o sistema esta quebrado. */
+/* ★★ discreto, no rodape: quem abre no idioma certo nem repara, e quem
+   precisa trocar acha sem procurar. */
+function seletorIdioma(){
+  const atual = idiomaAtual();
+  return '<div class="idiomas">' +
+    [['pt','Portugues'],['en','English'],['es','Espanol']].map(function(x){
+      return '<button class="lang' + (x[0] === atual ? ' atual' : '') +
+             '" data-l="' + x[0] + '">' + x[1] + '</button>';
+    }).join('') + '</div>';
+}
+
+function caixaDeAceite(p){
+  if (p.estado !== 'enviada') return '';
+  return '<div class="aceitar" id="caixaAceite">' +
+    '<h3>' + f('aceitar') + '</h3>' +
+    '<div class="sub">' + f('aceitar_sub') + '</div>' +
+    '<div id="erroAceite"></div>' +
+    '<div class="campo-a"><label for="aNome">' + f('seu_nome') + '</label>' +
+      '<input type="text" id="aNome" autocomplete="name" placeholder="' + f('nome_dica') + '"></div>' +
+    '<div class="campo-a"><label for="aDoc">' + f('seu_doc') + '</label>' +
+      '<input type="text" id="aDoc" inputmode="numeric" placeholder="000.000.000-00"></div>' +
+    '<label class="concordo"><input type="checkbox" id="aOk">' +
+      '<span>' + f('concordo') + '</span></label>' +
+    '<button class="btn-aceitar" id="btnAceitar">' + f('botao_aceitar') + '</button>' +
+  '</div>';
+}
+
+function soDigitos(v){ return String(v || '').replace(/\D/g, ''); }
+
+function mascaraDoc(v){
+  const d = soDigitos(v).slice(0, 14);
+  if (d.length <= 11) {
+    return d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  }
+  return d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+          .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+}
+
+function erroAceite(t){
+  document.getElementById('erroAceite').innerHTML = '<div class="erro-a">' + texto(t) + '</div>';
+}
+
+function ligarAceite(){
+  const doc = document.getElementById('aDoc');
+  doc.addEventListener('input', function(){ this.value = mascaraDoc(this.value); });
+
+  document.getElementById('btnAceitar').addEventListener('click', async function(){
+    const b = this;
+    document.getElementById('erroAceite').innerHTML = '';
+
+    const nome = document.getElementById('aNome').value.trim();
+    const numero = soDigitos(doc.value);
+    const marcou = document.getElementById('aOk').checked;
+
+    /* ★★ a conferencia daqui e so para a pessoa nao esperar a ida ate o
+       servidor. Quem decide de verdade e o servidor, que confere o digito. */
+    if (nome.length < 3 || nome.indexOf(' ') < 0) return erroAceite(f('falta_nome'));
+    if (numero.length !== 11 && numero.length !== 14) return erroAceite(f('falta_doc'));
+    if (!marcou) return erroAceite(f('falta_marcar'));
+
+    b.disabled = true;
+    b.innerHTML = '<span class="girando-a"></span>' + f('registrando');
+    try {
+      const t = new URLSearchParams(window.location.search).get('t');
+      const r = await fetch(API + '/p/' + encodeURIComponent(t) + '/aceitar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome: nome, documento: numero, concordo: true }),
+      });
+      const d = await r.json().catch(() => null);
+      if (!r.ok || !d || d.ok === false) {
+        b.disabled = false;
+        b.textContent = f('botao_aceitar');
+        erroAceite((d && d.erro) || f('erro_aceite'));
+        return;
+      }
+      /* ★★★ depois do aceite a pagina recarrega do servidor, em vez de
+         remendar a tela: o que ela mostra passa a vir de onde ficou gravado,
+         e nao do que o navegador achou que aconteceu. */
+      window.location.reload();
+    } catch (e) {
+      b.disabled = false;
+      b.textContent = f('botao_aceitar');
+      erroAceite(f('erro_rede_aceite'));
+    }
+  });
 }
 
 function desenhar(p){
   const itens = p.itens.map(function (i) {
-    const qtd = i.quantidade > 1 ? '<div class="obs">' + i.quantidade + ' unidades</div>' : '';
-    const rec = i.recorrente ? '<div class="obs">cobranca ' + texto(i.ciclo || 'mensal') + '</div>' : '';
+    const qtd = i.quantidade > 1 ? '<div class="obs">' + i.quantidade + ' ' + f('unidades') + '</div>' : '';
+    const rec = i.recorrente ? '<div class="obs">' + f('cobranca') + ' ' + texto(i.ciclo || '') + '</div>' : '';
     return '<div class="item"><div><div class="nome">' + texto(i.nome) + '</div>' + qtd + rec +
            '</div><div class="valor">' + texto(i.valor) + '</div></div>';
   }).join('');
 
   const parcelas = p.parcelas.map(function (x) {
     return '<div class="parcela' + (x.eh_sinal ? ' sinal' : '') + '">' +
-      '<div class="q">' + texto(x.nome) + (x.eh_sinal ? '<span class="marca">entrada</span>' : '') + '</div>' +
+      '<div class="q">' + texto(x.nome) + (x.eh_sinal ? '<span class="marca">' + f('entrada') + '</span>' : '') + '</div>' +
       '<div class="v">' + texto(x.valor) + '</div></div>';
   }).join('');
 
   const obs = p.observacao
-    ? '<div class="secao"><div class="rotulo">Observacoes</div><div class="obs-caixa">' + texto(p.observacao) + '</div></div>'
+    ? '<div class="secao"><div class="rotulo">' + f('observacoes') + '</div><div class="obs-caixa">' + texto(p.observacao) + '</div></div>'
     : '';
 
   /* ★★★ a validade em vermelho so quando ja passou. Antes disso e informacao,
      nao alerta, e informacao em vermelho treina a pessoa a ignorar vermelho. */
   const venceu = p.estado === 'expirada';
   const prazo = venceu
-    ? '<span style="color:var(--vermelho);font-weight:650">Esta proposta venceu em ' + texto(dataBR(p.validade_em)) + '.</span> Fale com quem enviou para receber uma atualizada.'
-    : 'Esta proposta vale ate <span class="prazo">' + texto(dataBR(p.validade_em)) + '</span>.';
+    ? '<span style="color:var(--vermelho);font-weight:650">' + f('venceu_em') + ' ' + texto(dataBR(p.validade_em)) + '.</span> ' + f('venceu_fale')
+    : f('vale_ate') + ' <span class="prazo">' + texto(dataBR(p.validade_em)) + '</span>.';
 
   const aceita = p.estado === 'aceita'
-    ? '<div class="assinado">Proposta aceita em ' + texto(dataBR(p.aceita_em)) +
-      (p.aceite_nome ? ' por ' + texto(p.aceite_nome) : '') + '.</div>'
+    ? '<div class="assinado">' + f('aceita_em') + ' ' + texto(dataBR(p.aceita_em)) +
+      (p.aceite_nome ? ' ' + f('aceita_por') + ' ' + texto(p.aceite_nome) : '') + '.</div>'
     : '';
 
   document.getElementById('tela').innerHTML =
     '<div class="folha">' +
       '<div class="topo">' +
-        '<div class="de">Proposta de ' + texto(p.de.nome) + '</div>' +
+        '<div class="de">' + f('de') + ' ' + texto(p.de.nome) + '</div>' +
         '<h1>' + texto(p.cliente.empresa || p.cliente.nome) + '</h1>' +
-        (p.cliente.empresa && p.cliente.nome ? '<div class="doc">Aos cuidados de ' + texto(p.cliente.nome) + '</div>' : '') +
-        '<div class="versao">Versao ' + texto(p.versao) + ' · ' + texto(dataBR(p.enviada_em)) + '</div>' +
+        (p.cliente.empresa && p.cliente.nome ? '<div class="doc">' + f('aos_cuidados') + ' ' + texto(p.cliente.nome) + '</div>' : '') +
+        '<div class="versao">' + f('versao') + ' ' + texto(p.versao) + ' · ' + texto(dataBR(p.enviada_em)) + '</div>' +
       '</div>' +
       '<div class="corpo">' +
-        '<div class="secao"><div class="rotulo">O que esta incluido</div>' + itens +
-          '<div class="total"><div class="rot">Total</div><div class="val">' + texto(p.total) + '</div></div>' +
+        '<div class="secao"><div class="rotulo">' + f('incluido') + '</div>' + itens +
+          '<div class="total"><div class="rot">' + f('total') + '</div><div class="val">' + texto(p.total) + '</div></div>' +
         '</div>' +
-        '<div class="secao"><div class="rotulo">Como fica o pagamento</div>' + parcelas + '</div>' +
+        '<div class="secao"><div class="rotulo">' + f('pagamento') + '</div>' + parcelas + '</div>' +
         obs +
       '</div>' +
-      '<div class="rodape">' + prazo + aceita + '</div>' +
+      '<div class="rodape">' + prazo + aceita + seletorIdioma() + '</div>' +
+      caixaDeAceite(p) +
     '</div>';
 
-  document.title = 'Proposta · ' + (p.cliente.empresa || p.cliente.nome);
+  if (p.estado === 'enviada') ligarAceite();
+  document.querySelectorAll('.lang').forEach(function (b) {
+    b.addEventListener('click', () => trocarIdioma(b.dataset.l));
+  });
+
+  document.title = f('titulo') + ' · ' + (p.cliente.empresa || p.cliente.nome);
 }
 
 (async function abrir(){
   const t = new URLSearchParams(window.location.search).get('t');
   if (!t) {
-    recado('Link incompleto', 'Confira se o endereco foi copiado inteiro, ate o fim.');
+    recado(f('sem_link'), f('sem_link_sub'));
     return;
   }
   try {
@@ -249,14 +512,12 @@ function desenhar(p){
     if (!r.ok || !dados || dados.ok === false) {
       /* ★★★ MESMO RECADO para link errado, proposta apagada e rascunho: a
          pagina nunca conta a quem tentou adivinhar que aquele link existe. */
-      recado('Esta proposta nao esta disponivel',
-             'O link pode ter expirado ou sido substituido por uma versao mais nova. Fale com quem enviou.');
+      recado(f('indisponivel'), f('indisponivel_sub'));
       return;
     }
     desenhar(dados.proposta);
   } catch (e) {
-    recado('Nao foi possivel abrir a proposta',
-           'Confira sua conexao com a internet e tente de novo em instantes.');
+    recado(f('sem_rede'), f('sem_rede_sub'));
   }
 })();
 </script>

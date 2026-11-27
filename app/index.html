@@ -19,7 +19,7 @@
 
 <div class="conteudo">
   <header class="topo">
-    <h1 id="tituloTela">Inicio</h1>
+    <h1 id="tituloTela"></h1>
     </header>
 
   <main class="area" id="area">
@@ -33,6 +33,7 @@
   </main>
 </div>
 
+<script src="assets/idioma.js"></script>
 <script src="assets/sessao.js"></script>
 <script src="assets/menu.js"></script>
 <script>
@@ -47,19 +48,11 @@ const el = (id) => document.getElementById(id);
 const usuario = Sessao.usuario();
 Menu.montar('inicio');
 
-const PAPEL_NA_TELA = {
-  super_adm: 'Super ADM',
-  dono: 'Dono da conta',
-  gestor: 'Gestor',
-  closer: 'Closer',
-  sdr: 'SDR',
-};
-
 /* ── o menu depende do papel ─────────────────────────────────────────────
    ★★★ A tela esconder o item NAO e a protecao: quem decide e o servidor, a
    cada chamada. Isto aqui e so para a pessoa nao ver porta que nao abre. */
 function abrir(tela, titulo){
-  el('tituloTela').textContent = titulo || 'Inicio';
+  el('tituloTela').textContent = titulo || t('menu.inicio');
   if (tela === 'inicio') return desenharInicio();
   /* ★★ Tela que ainda nao existe diz o que esta por vir, em vez de abrir
      vazia: tela em branco parece defeito, aviso parece plano. */
@@ -84,33 +77,30 @@ async function desenharInicio(){
     faixa =
       '<div class="faixa-cortesia">' +
         '<div class="dias">' + conta.dias_de_cortesia + '</div>' +
-        '<div class="frase"><strong>dias de cortesia no plano completo.</strong><br>' +
-        'Voce usa o sistema inteiro durante o teste. Para seguir sem parar depois, e so ativar a assinatura.</div>' +
+        '<div class="frase"><strong>' + t('inicio.cortesia_dias') + '</strong><br>' + t('inicio.cortesia_texto') + '</div>' +
       '</div>';
   } else if (conta && conta.situacao === 'vencida') {
     /* ★★★★ Mensagem de plano abre pelo GANHO, nunca pelo bloqueio, e nunca em
        vermelho: isto nao e falha, e um convite. */
     faixa =
       '<div class="faixa-cortesia">' +
-        '<div class="frase"><strong>Seus dados continuam todos aqui.</strong><br>' +
-        'Ativando a assinatura, voce volta a montar proposta com sinal no mesmo link, ' +
-        'recebe o aviso no WhatsApp quando o dinheiro cair e para de controlar comissao em planilha.</div>' +
+        '<div class="frase"><strong>' + t('inicio.vencida_titulo') + '</strong><br>' + t('inicio.vencida_texto') + '</div>' +
       '</div>';
   }
 
   el('area').innerHTML = faixa +
     '<div class="grade">' +
-      metrica('Propostas enviadas', '0', 'nenhuma ainda') +
-      metrica('Aguardando aceite',  '0', 'nada parado') +
-      metrica('Contratado no mes',  'R$ 0,00', 'nenhuma venda ainda') +
-      metrica('Recebido no mes',    'R$ 0,00', 'nenhum pagamento ainda') +
+      metrica(t('inicio.propostas_enviadas'), '0', t('inicio.nenhuma')) +
+      metrica(t('inicio.aguardando'), '0', t('inicio.nada_parado')) +
+      metrica(t('inicio.contratado'), emReais(0), t('inicio.sem_venda')) +
+      metrica(t('inicio.recebido'), emReais(0), t('inicio.sem_pagamento')) +
     '</div>' +
     '<div class="cartao">' +
-      '<div class="cartao-titulo">Para comecar</div>' +
-      '<div class="cartao-sub">Tres passos ate a primeira proposta no ar.</div>' +
-      passo(1, true,  'Conta criada', 'Sua conta esta ativa e voce e o dono dela.') +
-      passo(2, false, 'Monte seu catalogo', 'Cadastre o que voce vende, com preco, sinal e as etapas de entrega. A conta nasce vazia de proposito, para o catalogo ser o seu.') +
-      passo(3, false, 'Crie a equipe', 'Convide gestor, closer e SDR. Cada um enxerga so o que lhe diz respeito.') +
+      '<div class="cartao-titulo">' + t('inicio.comecar') + '</div>' +
+      '<div class="cartao-sub">' + t('inicio.comecar_sub') + '</div>' +
+      passo(1, true, t('inicio.passo1'), t('inicio.passo1_sub')) +
+      passo(2, false, t('inicio.passo2'), t('inicio.passo2_sub')) +
+      passo(3, false, t('inicio.passo3'), t('inicio.passo3_sub')) +
     '</div>';
 }
 

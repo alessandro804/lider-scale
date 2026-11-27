@@ -22,61 +22,62 @@
 <aside class="sidebar" id="sidebar"></aside>
 
 <div class="conteudo">
-  <header class="topo"><h1>Nova oportunidade</h1></header>
+  <header class="topo"><h1 id="tit"></h1></header>
   <main class="area">
     <div class="cartao folha">
-      <div class="cartao-titulo">Quem e o cliente</div>
-      <div class="cartao-sub">So o nome da empresa e obrigatorio. O resto da para completar depois.</div>
+      <div class="cartao-titulo" id="cTit"></div>
+      <div class="cartao-sub" id="cSub"></div>
 
       <div id="aviso"></div>
 
       <form id="forma" novalidate>
         <div class="campo">
-          <label for="empresa">Empresa</label>
-          <input type="text" id="empresa" autocomplete="organization" placeholder="Nome da empresa do cliente" required>
+          <label for="empresa" id="lEmpresa"></label>
+          <input type="text" id="empresa" autocomplete="organization"  required>
         </div>
         <div class="dupla">
           <div class="campo">
-            <label for="contato">Pessoa de contato</label>
-            <input type="text" id="contato" placeholder="Quem decide">
+            <label for="contato" id="lContato"></label>
+            <input type="text" id="contato" >
           </div>
           <div class="campo">
-            <label for="whatsapp">WhatsApp</label>
+            <label for="whatsapp" id="lWhats"></label>
             <input type="tel" id="whatsapp" inputmode="numeric" placeholder="(31) 99999-9999">
           </div>
         </div>
         <div class="dupla">
           <div class="campo">
-            <label for="email">E-mail</label>
-            <input type="email" id="email" autocomplete="off" placeholder="contato@empresa.com.br">
+            <label for="email" id="lEmail"></label>
+            <input type="email" id="email" autocomplete="off" >
           </div>
           <div class="campo">
-            <label for="documento">CPF ou CNPJ</label>
+            <label for="documento" id="lDoc"></label>
             <input type="text" id="documento" inputmode="numeric" placeholder="00.000.000/0000-00">
           </div>
         </div>
         <div class="campo">
-          <label for="origem">Como chegou</label>
+          <label for="origem" id="lOrigem"></label>
           <select id="origem">
-            <option value="">— escolher —</option>
-            <option value="indicacao">Indicacao</option>
-            <option value="instagram">Instagram</option>
-            <option value="google">Google</option>
-            <option value="prospeccao">Prospeccao ativa</option>
-            <option value="evento">Evento</option>
-            <option value="outro">Outro</option>
+            <option value=""></option>
+            <option value="indicacao"></option>
+            <option value="instagram"></option>
+            <option value="google"></option>
+            <option value="prospeccao"></option>
+            <option value="evento"></option>
+            <option value="outro"></option>
           </select>
         </div>
 
         <div style="display:flex;gap:10px;margin-top:8px">
-          <a href="../" class="btn btn-secundario" style="flex:0 0 auto;text-decoration:none">Voltar</a>
-          <button type="submit" class="btn btn-principal" id="btnSalvar" style="flex:1">Cadastrar</button>
+          <a href="../" class="btn btn-secundario" style="flex:0 0 auto;text-decoration:none" id="lVoltar"></a>
+          <button type="submit" class="btn btn-principal" id="btnSalvar" style="flex:1"></button>
         </div>
       </form>
     </div>
   </main>
 </div>
 
+<script src="../../assets/idioma.js"></script>
 <script src="../../assets/sessao.js"></script>
 <script src="../../assets/menu.js"></script>
 <script>
@@ -84,6 +85,21 @@
 if (!Sessao.exigir()) throw new Error('sem sessao');
 const el = (id) => document.getElementById(id);
 Menu.montar('oportunidades');
+
+/* ★★ rotulos e dicas no idioma escolhido */
+const R = {
+  tit:'op.nova', cTit:'op.quem', cSub:'op.quem_sub', lEmpresa:'op.empresa',
+  lContato:'op.contato', lWhats:'op.whatsapp', lEmail:'op.email',
+  lDoc:'op.documento', lOrigem:'op.origem', lVoltar:'op.voltar', btnSalvar:'op.cadastrar',
+};
+for (const id of Object.keys(R)) el(id).textContent = t(R[id]);
+el('empresa').placeholder = t('op.empresa_dica');
+el('contato').placeholder = t('op.contato_dica');
+el('email').placeholder = 'contato@empresa.com.br';
+document.title = t('op.nova') + ' · Lider Scale';
+el('origem').querySelectorAll('option').forEach(function (o) {
+  o.textContent = o.value ? t('op.origem.' + o.value) : t('op.escolher');
+});
 
 const so = (v) => String(v || '').replace(/\D/g, '');
 
@@ -110,11 +126,11 @@ el('forma').addEventListener('submit', async function (e) {
   e.preventDefault();
   el('aviso').innerHTML = '';
   const empresa = el('empresa').value.trim();
-  if (empresa.length < 2) return erro('Informe o nome da empresa do cliente.');
+  if (empresa.length < 2) return erro(t('op.falta_empresa'));
 
   const b = el('btnSalvar');
   b.disabled = true;
-  b.innerHTML = '<span class="girando"></span> Cadastrando';
+  b.innerHTML = '<span class="girando"></span> ' + t('op.cadastrando');
   try {
     await chamar('/oportunidades', {
       method: 'POST',
@@ -131,7 +147,7 @@ el('forma').addEventListener('submit', async function (e) {
     window.location.href = '../';
   } catch (ex) {
     b.disabled = false;
-    b.textContent = 'Cadastrar';
+    b.textContent = t('op.cadastrar');
     erro(ex.message);
   }
 });
