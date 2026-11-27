@@ -412,6 +412,17 @@ function ligarGoogle(){
       ux_mode: 'popup',
       auto_select: false,
       cancel_on_tap_outside: true,
+
+      // ★★★★★ A JANELA DO GOOGLE, NAO O FedCM. Com o padrao (FedCM ligado),
+      //   o clique chega ao iframe do Google, o FedCM falha com
+      //   "NetworkError: Error retrieving a token" e a tela nao faz NADA:
+      //   sem aviso, sem popup, so uma linha no console que o usuario nunca
+      //   ve. O FedCM depende de o navegador permitir entrada federada, e o
+      //   proprio Chrome bloqueia o site depois que alguem fecha o aviso uma
+      //   vez. A janela de login classica funciona em mais navegadores e,
+      //   quando algo esta errado, mostra o erro do proprio Google.
+      use_fedcm_for_button: false,
+      use_fedcm_for_prompt: false,
     });
     googlePronto = true;
     return true;
