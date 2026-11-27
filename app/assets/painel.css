@@ -130,10 +130,15 @@ a.sb-item{ text-decoration:none; }
 .sb-em-breve{ opacity:.42; cursor:default; }
 .sb-em-breve:hover{ background:transparent; color: var(--texto-2); }
 .sb-breve{
-  margin-left:auto; font-size:10px; font-weight:700; letter-spacing:.05em;
+  /* ★★ `nowrap` porque "coming soon" e "proximamente" sao mais longos que
+     "em breve": sem isto a etiqueta quebra em duas linhas e empurra o item
+     do menu, e o desalinho so aparece nos outros idiomas. */
+  margin-left:auto; flex:0 0 auto; white-space:nowrap;
+  font-size:9.5px; font-weight:700; letter-spacing:.04em;
   text-transform:uppercase; color: var(--texto-3);
-  border:1px solid var(--borda); border-radius:100px; padding:1px 7px;
+  border:1px solid var(--borda); border-radius:100px; padding:1px 6px;
 }
+.sb-item{ white-space:nowrap; }
 
 /* ── o seletor de idioma, no pe da lateral ──────────────────────────────── */
 .sb-idiomas{ display:flex; gap:6px; padding:4px 12px 2px; }
