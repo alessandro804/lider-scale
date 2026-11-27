@@ -109,8 +109,17 @@ const Menu = {
       //   nada do sistema na tela: a pessoa acha que quebrou tudo. Apagado e
       //   com a palavra "em breve" ela entende que e so o que falta chegar.
       if (it.pronto === false) {
-        html += '<div class="sb-item sb-em-breve" title="em breve">' + icone +
-                t('menu.' + it.id) + '<span class="sb-breve">' + t('menu.embreve') + '</span></div>';
+        // ★★★★ ICONE, NAO ETIQUETA DE TEXTO. "em breve" cabia na largura da
+        //   lateral; "coming soon" e "proximamente" nao, e o item era
+        //   cortado em duas das tres linguas. Largura fixa com texto
+        //   traduzivel dentro so funciona ate alguem traduzir. O `title`
+        //   conta o que o icone quer dizer, no idioma de quem le.
+        html += '<div class="sb-item sb-em-breve" title="' + t('menu.embreve') + '">' +
+                '<span class="sb-ico">' + icone + '</span>' +
+                '<span class="sb-txt">' + t('menu.' + it.id) + '</span>' +
+                '<svg class="sb-breve" width="13" height="13" viewBox="0 0 24 24" fill="none" ' +
+                'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+                '<circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 2"></path></svg></div>';
         continue;
       }
 
