@@ -64,9 +64,35 @@ const Sessao = {
 // ★★★ 401 em qualquer lugar significa sessao vencida: limpa e volta ao login
 //   sem perguntar, porque nao ha o que a pessoa possa fazer na tela atual.
 async function chamar(caminho, opcoes) {
-  const r = await fetch(API + caminho, Object.assign({
-    headers: { 'Content-Type': 'application/json' },
-  }, opcoes || {}));
+  // ★★★★★ FALHA DE REDE NAO PODE SUBIR CRUA ATE A TELA. Sem este try, o
+  //   navegador joga "TypeError: Failed to fetch" na caixa de erro: ingles,
+  //   linguagem de programador, e nada que diga a pessoa o que fazer. Vale
+  //   para quando o sistema esta fora e tambem para quando e a internet dela.
+  //
+  // ★★★ O TEMPO LIMITE E DAQUI, nao do navegador. Sem ele, uma chamada pode
+  //   ficar pendurada por minutos com o botao travado em "Entrando", e a
+  //   pessoa nao sabe se espera ou se desistiu.
+  let r;
+  try {
+    const corta = new AbortController();
+    const relogio = setTimeout(() => corta.abort(), 20000);
+    try {
+      r = await fetch(API + caminho, Object.assign({
+        headers: { 'Content-Type': 'application/json' },
+        signal: corta.signal,
+      }, opcoes || {}));
+    } finally { clearTimeout(relogio); }
+  } catch (falha) {
+    const e = new Error(
+      falha && falha.name === 'AbortError'
+        ? 'O sistema demorou demais para responder. Tente de novo em instantes.'
+        : 'Nao foi possivel falar com o sistema. Confira sua conexao com a internet e tente de novo em instantes.'
+    );
+    e.rede = true;
+    // o detalhe tecnico fica no console, para quem for investigar
+    console.error('[rede] ' + caminho + ': ' + (falha && falha.message ? falha.message : falha));
+    throw e;
+  }
 
   if (r.status === 401 && !String(caminho).startsWith('/auth/entrar')) {
     Sessao.limpar();
