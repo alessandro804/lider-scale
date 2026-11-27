@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Entrar · Lider Scale</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   ENTRADA · mesmo esqueleto do login do Lider 10, com a pele escura
+   ═══════════════════════════════════════════════════════════════════════════
+   As tres caixas (entrar, criar conta, recuperar) vivem no MESMO cartao e se
+   alternam, como no Lider 10. Trocar de caixa nao recarrega a pagina e nao
+   move a logo de lugar, entao a troca nao pisca.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.login-split{ display:grid; grid-template-columns: 480px 1fr; min-height:100vh; }
+
+.login-form-side{
+  display:flex; align-items:center; justify-content:center;
+  padding:40px 34px; background: var(--fundo); overflow-y:auto;
+}
+.login-card{ width:100%; max-width:372px; }
+
+.logo-area{ display:flex; align-items:center; gap:11px; margin-bottom:26px; }
+.logo-area img{ width:38px; height:38px; border-radius:10px; object-fit:contain; }
+.logo-area span{ font-size:22px; font-weight:800; letter-spacing:-.025em; }
+.logo-area span i{ font-style:normal; color: var(--violeta-300); font-weight:700; }
+
+.login-subtitle{ font-size:15px; color: var(--texto-2); margin-bottom:22px; }
+
+/* ── o convite da cortesia ───────────────────────────────────────────────── */
+.caixa-cortesia{
+  background: linear-gradient(135deg, rgba(120,44,251,.14), rgba(67,19,150,.10));
+  border:1px solid rgba(120,44,251,.3);
+  border-radius: var(--raio-p);
+  padding:11px 13px; font-size:12.5px; line-height:1.55;
+  color: var(--violeta-100); margin-bottom:16px;
+}
+.caixa-cortesia strong{ color: var(--violeta-200); font-weight:700; }
+
+/* ── area do Google ──────────────────────────────────────────────────────── */
+.lc-google-area{ margin-bottom:18px; }
+.btn-google{
+  width:100%; height:44px; display:flex; align-items:center; justify-content:center; gap:11px;
+  background: var(--superficie-2); color: var(--texto);
+  border:1px solid var(--borda-forte); border-radius: var(--raio-p);
+  font-size:14.5px; font-weight:600; font-family:inherit; cursor:pointer;
+  transition: var(--transicao);
+}
+.btn-google:hover:not(:disabled){ background: var(--superficie-3); border-color: var(--violeta-800); }
+.btn-google:disabled{ opacity:.5; cursor:not-allowed; }
+.lc-google-ou{
+  display:flex; align-items:center; gap:12px; margin:16px 0 2px;
+  font-size:12px; color: var(--texto-3);
+}
+.lc-google-ou i{ flex:1; height:1px; background: var(--borda); }
+
+/* ── senha com o olho, igual ao Lider 10 ─────────────────────────────────── */
+.senha-caixa{ position:relative; }
+.senha-caixa input{ padding-right:44px; }
+.olho{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer; padding:6px;
+  color: var(--texto-3); display:flex; border-radius:6px;
+  transition: var(--transicao);
+}
+.olho:hover{ color: var(--texto-2); background: var(--superficie-3); }
+
+.linha-rodape{ text-align:center; margin-top:17px; font-size:13px; color: var(--texto-2); }
+.linha-rodape a{ font-weight:650; }
+.forgot{ text-align:center; margin-top:13px; font-size:12.5px; }
+
+.btn-login{ height:45px; font-size:15px; margin-top:6px; }
+
+.termos{ display:flex; align-items:flex-start; gap:9px; margin:4px 0 16px; }
+.termos input{ width:17px; height:17px; margin-top:2px; flex:0 0 auto; cursor:pointer; accent-color: var(--violeta); }
+.termos label{ font-size:12.5px; color: var(--texto-2); line-height:1.5; cursor:pointer; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   OS ANEIS · a mesma arte do Lider 10, em violeta
+   ═══════════════════════════════════════════════════════════════════════════ */
+.login-art-side{
+  position:relative; overflow:hidden;
+  background:
+    radial-gradient(1000px 700px at 50% 42%, rgba(120,44,251,.26), transparent 66%),
+    linear-gradient(158deg, #1A0F33 0%, #110A22 52%, #0A0612 100%);
+  display:flex; align-items:center; justify-content:center;
+  border-left:1px solid var(--borda);
+}
+.login-rings{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+.login-rings i{
+  position:absolute; border-radius:50%;
+  border:1px solid rgba(178,136,252,.13);
+  animation: pulsa 7s ease-in-out infinite;
+}
+.login-rings i:nth-child(1){ width:260px;  height:260px;  animation-delay:0s; }
+.login-rings i:nth-child(2){ width:450px;  height:450px;  animation-delay:.5s; border-color:rgba(178,136,252,.10); }
+.login-rings i:nth-child(3){ width:650px;  height:650px;  animation-delay:1s;  border-color:rgba(178,136,252,.07); }
+.login-rings i:nth-child(4){ width:880px;  height:880px;  animation-delay:1.5s;border-color:rgba(178,136,252,.05); }
+.login-rings i:nth-child(5){ width:1140px; height:1140px; animation-delay:2s;  border-color:rgba(178,136,252,.035); }
+@keyframes pulsa{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.035); opacity:.65; } }
+
+.login-art-logo{
+  position:relative; z-index:2;
+  width:150px; height:150px; border-radius:38px;
+  background: var(--superficie); border:1px solid var(--borda-forte);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow: 0 24px 70px rgba(120,44,251,.3);
+}
+.login-art-logo img{ width:108px; height:108px; object-fit:contain; border-radius:26px; }
+
+.art-frase{
+  position:absolute; bottom:52px; left:0; right:0; z-index:2;
+  text-align:center; padding:0 40px;
+}
+.art-frase h2{
+  font-size:25px; font-weight:750; letter-spacing:-.03em; margin-bottom:8px;
+}
+.art-frase h2 em{
+  font-style:normal;
+  background: linear-gradient(97deg, var(--violeta-300), var(--violeta-100));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.art-frase p{ color: var(--texto-2); font-size:14px; max-width:420px; margin:0 auto; }
+
+@media (max-width: 960px){
+  .login-split{ grid-template-columns: 1fr; }
+  .login-art-side{ display:none; }
+  .login-form-side{ padding:36px 24px; align-items:flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="login-split">
+
+  <div class="login-form-side">
+    <div class="login-card">
+
+      <div class="logo-area">
+        <img src="../assets/logo-128.png" alt="">
+        <span>Lider <i>Scale</i></span>
+      </div>
+
+      <!-- ════════ ENTRAR ════════ -->
+      <div id="caixaEntrar">
+        <div class="login-subtitle">Entre na sua conta</div>
+
+        <div class="lc-google-area">
+          <button type="button" class="btn-google" id="googleEntrar">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Continuar com o Google
+          </button>
+          <div class="lc-google-ou"><i></i><span>ou</span><i></i></div>
+        </div>
+
+        <div id="erroEntrar"></div>
+
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" autocomplete="username" placeholder="seu@email.com">
+        </div>
+
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <div class="senha-caixa">
+            <input type="password" id="senha" autocomplete="current-password" placeholder="Sua senha">
+            <button type="button" class="olho" data-alvo="senha" aria-label="Mostrar ou ocultar a senha">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-principal btn-bloco btn-login" id="btnEntrar">Entrar</button>
+
+        <div class="forgot"><a href="#" id="linkEsqueci">Esqueci minha senha</a></div>
+        <div class="linha-rodape">
+          Ainda nao tem conta? <a href="#" id="linkCriar">Criar conta gratis</a>
+        </div>
+      </div>
+
+      <!-- ════════ CRIAR CONTA ════════ -->
+      <div id="caixaCriar" style="display:none">
+        <div class="login-subtitle" style="margin-bottom:10px">Crie sua conta</div>
+
+        <div class="caixa-cortesia">
+          <strong>7 dias de cortesia no plano completo</strong>, sem cartao de credito.
+          Voce usa o sistema inteiro durante o teste e decide depois.
+        </div>
+
+        <div class="lc-google-area">
+          <button type="button" class="btn-google" id="googleCriar">
+            <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Continuar com o Google
+          </button>
+          <div class="lc-google-ou"><i></i><span>ou</span><i></i></div>
+        </div>
+
+        <div id="erroCriar"></div>
+
+        <div class="campo">
+          <label for="cadNome">Nome</label>
+          <input type="text" id="cadNome" autocomplete="name" placeholder="Seu nome">
+        </div>
+
+        <div class="campo">
+          <label for="cadEmpresa">Empresa</label>
+          <input type="text" id="cadEmpresa" autocomplete="organization" placeholder="Nome da sua empresa">
+        </div>
+
+        <div class="campo">
+          <label for="cadEmail">E-mail</label>
+          <input type="email" id="cadEmail" autocomplete="email" placeholder="seu@email.com">
+        </div>
+
+        <div class="campo">
+          <label for="cadTelefone">Celular (WhatsApp)</label>
+          <input type="tel" id="cadTelefone" autocomplete="tel" placeholder="(37) 99999-9999" inputmode="numeric">
+        </div>
+
+        <div class="campo">
+          <label for="cadDocumento">CPF ou CNPJ</label>
+          <input type="text" id="cadDocumento" placeholder="Somente numeros" inputmode="numeric">
+        </div>
+
+        <div class="campo">
+          <label for="cadSenha">Senha</label>
+          <div class="senha-caixa">
+            <input type="password" id="cadSenha" autocomplete="new-password" placeholder="Minimo 6 caracteres">
+            <button type="button" class="olho" data-alvo="cadSenha" aria-label="Mostrar ou ocultar a senha">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"></path><circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="termos">
+          <input type="checkbox" id="cadTermos">
+          <label for="cadTermos">
+            Li e concordo com os <a href="https://liderscale.com/termos" target="_blank" rel="noopener">Termos de Uso</a>
+            e a <a href="https://liderscale.com/privacidade" target="_blank" rel="noopener">Politica de Privacidade</a>.
+          </label>
+        </div>
+
+        <button class="btn btn-principal btn-bloco btn-login" id="btnCriar">Criar minha conta</button>
+
+        <div class="linha-rodape">
+          Ja tem conta? <a href="#" id="linkVoltar">Fazer login</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="login-art-side">
+    <div class="login-rings"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="login-art-logo"><img src="../assets/logo-128.png" alt=""></div>
+    <div class="art-frase">
+      <h2>Do aperto de mao ao <em>dinheiro na conta</em>.</h2>
+      <p>Proposta, aceite, sinal e comissao no mesmo lugar, com o tempo de cada etapa registrado.</p>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="../assets/sessao.js"></script>
+<script>
+'use strict';
+
+if (Sessao.token()) window.location.replace('/app/');
+
+const el = (id) => document.getElementById(id);
+
+/* ★★★★ O ERRO SAI EM VERMELHO E NA CAIXA DELE, nunca junto de outro texto. */
+function erro(onde, texto){
+  el(onde).innerHTML =
+    '<div class="aviso aviso-erro" role="alert">' +
+      '<svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+        '<circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>' +
+      '<span>' + texto + '</span></div>';
+  el(onde).scrollIntoView({ block:'nearest', behavior:'smooth' });
+}
+function limpar(onde){ el(onde).innerHTML = ''; }
+function recado(onde, texto){
+  el(onde).innerHTML =
+    '<div class="aviso aviso-neutro">' +
+      '<svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">' +
+        '<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>' +
+      '<span>' + texto + '</span></div>';
+}
+function ocupado(btn, sim, texto){
+  btn.disabled = sim;
+  btn.innerHTML = sim ? '<span class="girando"></span> ' + texto : texto;
+}
+
+/* ── o olho da senha, igual ao do Lider 10 ─────────────────────────────── */
+document.querySelectorAll('.olho').forEach(function (b) {
+  b.addEventListener('click', function () {
+    const campo = el(b.dataset.alvo);
+    campo.type = campo.type === 'password' ? 'text' : 'password';
+    campo.focus();
+  });
+});
+
+/* ── alternar as caixas, sem recarregar ────────────────────────────────── */
+function mostrarCriar(sim){
+  el('caixaEntrar').style.display = sim ? 'none' : '';
+  el('caixaCriar').style.display  = sim ? '' : 'none';
+  limpar('erroEntrar'); limpar('erroCriar');
+  (sim ? el('cadNome') : el('email')).focus();
+}
+el('linkCriar').addEventListener('click', (e)=>{ e.preventDefault(); mostrarCriar(true); });
+el('linkVoltar').addEventListener('click', (e)=>{ e.preventDefault(); mostrarCriar(false); });
+
+/* ── mascaras, que so arrumam o que a pessoa ve ────────────────────────── */
+el('cadTelefone').addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'').slice(0,11);
+  if (v.length > 6)      v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+  else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+  else if (v.length > 0) v = '(' + v;
+  this.value = v;
+});
+el('cadDocumento').addEventListener('input', function(){
+  let v = this.value.replace(/\D/g,'').slice(0,14);
+  if (v.length <= 11) {
+    v = v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  } else {
+    v = v.replace(/^(\d{2})(\d)/,'$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3')
+         .replace(/\.(\d{3})(\d)/,'.$1/$2').replace(/(\d{4})(\d)/,'$1-$2');
+  }
+  this.value = v;
+});
+
+/* ── entrar ────────────────────────────────────────────────────────────── */
+async function entrar(){
+  limpar('erroEntrar');
+  const email = el('email').value.trim();
+  const senha = el('senha').value;
+  if (!email || !senha) return erro('erroEntrar','Preencha o e-mail e a senha.');
+
+  ocupado(el('btnEntrar'), true, 'Entrando');
+  try {
+    const r = await chamar('/auth/entrar', { method:'POST', body: JSON.stringify({ email, senha }) });
+    Sessao.guardar(r.token, r.usuario);
+    window.location.href = '/app/';
+  } catch (e) {
+    erro('erroEntrar', e.message);
+    ocupado(el('btnEntrar'), false, 'Entrar');
+    el('senha').value = ''; el('senha').focus();
+  }
+}
+el('btnEntrar').addEventListener('click', entrar);
+['email','senha'].forEach(id => el(id).addEventListener('keydown', e => { if (e.key === 'Enter') entrar(); }));
+
+/* ── criar conta ───────────────────────────────────────────────────────── */
+async function criar(){
+  limpar('erroCriar');
+  const corpo = {
+    nome:      el('cadNome').value.trim(),
+    empresa:   el('cadEmpresa').value.trim(),
+    email:     el('cadEmail').value.trim(),
+    telefone:  el('cadTelefone').value,
+    documento: el('cadDocumento').value,
+    senha:     el('cadSenha').value,
+    aceite_termos: el('cadTermos').checked,
+    origem: 'app',
+  };
+  if (!corpo.nome)          return erro('erroCriar','Informe o seu nome.');
+  if (!corpo.email)         return erro('erroCriar','Informe o seu e-mail.');
+  if (!corpo.telefone)      return erro('erroCriar','Informe o celular com DDD.');
+  if (!corpo.documento)     return erro('erroCriar','Informe o CPF ou o CNPJ.');
+  if (corpo.senha.length < 6) return erro('erroCriar','A senha precisa de pelo menos 6 caracteres.');
+  if (!corpo.aceite_termos) return erro('erroCriar','Para criar a conta e preciso aceitar os termos de uso.');
+
+  ocupado(el('btnCriar'), true, 'Criando sua conta');
+  try {
+    const r = await chamar('/cadastro', { method:'POST', body: JSON.stringify(corpo) });
+    Sessao.guardar(r.token, r.usuario);
+    window.location.href = '/app/?bemvindo=1';
+  } catch (e) {
+    erro('erroCriar', e.message);
+    ocupado(el('btnCriar'), false, 'Criar minha conta');
+  }
+}
+el('btnCriar').addEventListener('click', criar);
+
+/* ── o que ainda nao esta ligado ───────────────────────────────────────── */
+/* ★★★ O botao do Google fica VISIVEL e desligado, nao escondido: assim o
+   layout ja nasce no lugar definitivo e ligar depois nao mexe em posicao
+   nenhuma. A frase diz o que fazer agora, em vez de so avisar que nao da. */
+// ═══════════════════════════════════════════════════════════════════════
+// ENTRAR PELO GOOGLE
+// ═══════════════════════════════════════════════════════════════════════
+// ★★★★ O BOTAO SO LIGA DEPOIS QUE A BIBLIOTECA DO GOOGLE CARREGA. Ela vem
+//   com `async defer`, entao nos primeiros instantes da pagina ela nao
+//   existe. Clicar nesse vao daria erro de script, e para quem esta olhando
+//   o botao simplesmente nao faria nada.
+let googlePronto = false;
+
+function ligarGoogle(){
+  if (googlePronto) return true;
+  if (!window.google || !google.accounts || !google.accounts.id) return false;
+  try {
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: entrarComGoogle,
+      ux_mode: 'popup',
+      auto_select: false,
+    });
+    googlePronto = true;
+    return true;
+  } catch (e) { return false; }
+}
+
+// tenta ligar assim que a biblioteca chegar, sem travar a pagina
+(function esperarGoogle(tentativa){
+  if (ligarGoogle()) return;
+  if ((tentativa || 0) > 40) return;          // ~8s e desiste em silencio
+  setTimeout(() => esperarGoogle((tentativa || 0) + 1), 200);
+})(0);
+
+let ondeAvisar = 'erroEntrar';
+
+function pedirGoogle(onde){
+  ondeAvisar = onde;
+  if (!ligarGoogle()) {
+    recado(onde, 'A entrada pelo Google ainda esta carregando. Tente de novo em instantes ou use o e-mail e a senha.');
+    return;
+  }
+  limpar(onde);
+  google.accounts.id.prompt();
+}
+
+async function entrarComGoogle(resposta){
+  const onde = ondeAvisar;
+  if (!resposta || !resposta.credential) {
+    recado(onde, 'A entrada pelo Google foi cancelada.');
+    return;
+  }
+  // ★★★ `ocupado` troca o innerHTML inteiro, e este botao tem o logo do
+  //   Google em SVG dentro. Sem guardar o original, um erro deixaria o botao
+  //   so com texto, sem o logo, pelo resto da visita.
+  const botao = el(onde === 'erroCriar' ? 'googleCriar' : 'googleEntrar');
+  const marcaOriginal = botao.innerHTML;
+  ocupado(botao, true, 'Entrando');
+  try {
+    const r = await chamar('/auth/google', {
+      method: 'POST',
+      body: JSON.stringify({ credential: resposta.credential }),
+    });
+    Sessao.guardar(r.token, r.usuario);
+    // ★★★ quem veio do Google ainda nao tem documento nem celular: a tela
+    //   seguinte pede isso antes de soltar a pessoa no sistema.
+    window.location.href = r.completar ? '../completar/' : '../';
+  } catch (e) {
+    botao.disabled = false;
+    botao.innerHTML = marcaOriginal;
+    erro(onde, e.message);
+  }
+}
+el('googleEntrar').addEventListener('click', ()=> pedirGoogle('erroEntrar'));
+el('googleCriar').addEventListener('click', ()=> pedirGoogle('erroCriar'));
+
+el('linkEsqueci').addEventListener('click', function(e){
+  e.preventDefault();
+  recado('erroEntrar','A redefinicao por codigo entra em breve. Por enquanto, fale com o administrador da sua conta.');
+});
+</script>
+</body>
+</html>

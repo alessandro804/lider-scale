@@ -1,0 +1,212 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   LIDER SCALE · BASE
+   ═══════════════════════════════════════════════════════════════════════════
+   Tema escuro, violeta da marca. Estes tokens sao a unica fonte de cor do
+   sistema: nenhuma tela escreve hexadecimal solto.
+
+   ★★★★★ O FUNDO NAO E PRETO PURO, E NAO E CAPRICHO.
+   #000 contra texto branco produz um contraste duro que cansa a vista em
+   leitura longa, e tira qualquer margem para construir profundidade: nao
+   existe tom mais escuro que o preto para fazer um card afundar. Por isso o
+   fundo e um violeta quase preto, e cada camada acima dele clareia um pouco.
+
+   ★★★★ VERMELHO, AMBAR E VERDE SAO MAIS CLAROS QUE NO TEMA CLARO.
+   O #dc2626 do Lider 10 tem contraste 4,9:1 sobre branco, mas despenca para
+   3,1:1 sobre fundo escuro, abaixo do minimo legivel. As versoes daqui foram
+   escolhidas medindo o contraste contra o fundo real, nao por aparencia.
+
+   ★★★ A COR DE ERRO NUNCA E A COR DA MARCA. O violeta e o que o usuario
+   clica; o vermelho e o que deu errado. Se o erro saisse em violeta, a
+   pessoa leria como instrucao, que e exatamente o que a regra proibe.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* ── camadas, da mais funda para a mais alta ── */
+  --fundo:        #0A0612;
+  --superficie:   #130D21;
+  --superficie-2: #1B1330;
+  --superficie-3: #241A40;
+  --borda:        #2C2145;
+  --borda-forte:  #3D2E5E;
+
+  /* ── texto ── */
+  --texto:     #F2EEFA;
+  --texto-2:   #A89FC0;
+  --texto-3:   #6F6688;
+
+  /* ── a marca ── */
+  --violeta-50:  #F4EEFF;
+  --violeta-100: #E5D7FE;
+  --violeta-200: #CFB4FD;
+  --violeta-300: #B288FC;
+  --violeta-400: #9458FC;
+  --violeta:     #782CFB;
+  --violeta-600: #6009F6;
+  --violeta-700: #530FC7;
+  --violeta-800: #431396;
+  --violeta-900: #321268;
+
+  /* ── estados, medidos contra o fundo escuro ── */
+  --vermelho:      #FF5D63;
+  --vermelho-leve: #2A1217;
+  --ambar:         #FFB02E;
+  --ambar-leve:    #2A1F0D;
+  --verde:         #2FD67F;
+  --verde-leve:    #0D2419;
+  --azul:          #4DA3FF;
+
+  /* ── medidas ── */
+  --raio:    12px;
+  --raio-g:  18px;
+  --raio-p:  8px;
+  --sombra:  0 2px 8px rgba(0,0,0,.4);
+  --sombra-g:0 16px 48px rgba(0,0,0,.55);
+  --brilho:  0 0 0 3px rgba(120,44,251,.25);
+  --lateral: 248px;
+  --transicao: 160ms cubic-bezier(.4,0,.2,1);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html,body{ height:100%; }
+
+body{
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ★★ numero em tabela e em valor usa fonte tabular: sem isso as colunas
+   dancam conforme o digito, e comparar valor na vertical fica dificil */
+.num, td.num, .valor, .metrica-valor{
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+a{ color: var(--violeta-300); text-decoration:none; }
+a:hover{ color: var(--violeta-200); }
+
+::selection{ background: var(--violeta-700); color:#fff; }
+
+/* ── barra de rolagem, para nao destoar do tema ── */
+*::-webkit-scrollbar{ width:10px; height:10px; }
+*::-webkit-scrollbar-track{ background: transparent; }
+*::-webkit-scrollbar-thumb{ background: var(--borda-forte); border-radius:10px; border:2px solid var(--fundo); }
+*::-webkit-scrollbar-thumb:hover{ background: var(--violeta-800); }
+
+/* ═══ BOTOES ═══════════════════════════════════════════════════════════════ */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  padding:10px 18px; border-radius:var(--raio-p); border:1px solid transparent;
+  font-size:14px; font-weight:600; font-family:inherit; cursor:pointer;
+  transition: var(--transicao); white-space:nowrap; line-height:1.2;
+}
+.btn:focus-visible{ outline:none; box-shadow: var(--brilho); }
+.btn:disabled{ opacity:.45; cursor:not-allowed; }
+
+.btn-principal{ background: var(--violeta); color:#fff; }
+.btn-principal:hover:not(:disabled){ background: var(--violeta-400); transform: translateY(-1px); }
+.btn-principal:active:not(:disabled){ background: var(--violeta-600); transform:none; }
+
+.btn-secundario{ background: var(--superficie-2); color: var(--texto); border-color: var(--borda); }
+.btn-secundario:hover:not(:disabled){ background: var(--superficie-3); border-color: var(--borda-forte); }
+
+.btn-fantasma{ background:transparent; color: var(--texto-2); }
+.btn-fantasma:hover:not(:disabled){ background: var(--superficie-2); color: var(--texto); }
+
+.btn-perigo{ background: var(--vermelho); color:#2A0A0C; }
+.btn-perigo:hover:not(:disabled){ filter: brightness(1.1); }
+
+.btn-bloco{ width:100%; }
+
+/* ═══ CAMPOS ═══════════════════════════════════════════════════════════════ */
+.campo{ margin-bottom:16px; }
+.campo label{
+  display:block; font-size:13px; font-weight:600; color: var(--texto-2);
+  margin-bottom:7px; letter-spacing:.01em;
+}
+.campo input, .campo select, .campo textarea{
+  width:100%; padding:11px 14px;
+  background: var(--superficie); color: var(--texto);
+  border:1px solid var(--borda); border-radius:var(--raio-p);
+  font-size:15px; font-family:inherit; transition: var(--transicao);
+}
+.campo input::placeholder, .campo textarea::placeholder{ color: var(--texto-3); }
+.campo input:hover, .campo select:hover, .campo textarea:hover{ border-color: var(--borda-forte); }
+.campo input:focus, .campo select:focus, .campo textarea:focus{
+  outline:none; border-color: var(--violeta); box-shadow: var(--brilho);
+  background: var(--superficie-2);
+}
+.campo .ajuda{ font-size:12.5px; color: var(--texto-3); margin-top:6px; }
+
+/* ═══ AVISOS ═══════════════════════════════════════════════════════════════
+   ★★★★★ CADA UM NA SUA CAIXA, E O ERRO VEM PRIMEIRO. Erro grudado com
+   instrucao no mesmo paragrafo faz a pessoa ler tudo como instrucao e nao
+   perceber que algo falhou. */
+.aviso{
+  display:flex; gap:11px; align-items:flex-start;
+  padding:12px 15px; border-radius:var(--raio-p);
+  font-size:14px; line-height:1.5; margin-bottom:14px;
+  border:1px solid transparent;
+}
+.aviso .ico{ flex:0 0 auto; margin-top:1px; }
+.aviso-erro{ background: var(--vermelho-leve); border-color: rgba(255,93,99,.35); color:#FFC9CB; }
+.aviso-erro strong{ color: var(--vermelho); }
+.aviso-atencao{ background: var(--ambar-leve); border-color: rgba(255,176,46,.3); color:#FFDFA8; }
+.aviso-certo{ background: var(--verde-leve); border-color: rgba(47,214,127,.3); color:#A5EFC8; }
+.aviso-neutro{ background: var(--superficie-2); border-color: var(--borda); color: var(--texto-2); }
+
+/* ═══ CARTAO ═══════════════════════════════════════════════════════════════ */
+.cartao{
+  background: var(--superficie);
+  border:1px solid var(--borda);
+  border-radius: var(--raio);
+  padding:20px;
+}
+.cartao-titulo{
+  font-size:15px; font-weight:650; margin-bottom:4px; letter-spacing:-.01em;
+}
+.cartao-sub{ font-size:13px; color: var(--texto-2); margin-bottom:16px; }
+
+/* ═══ ETIQUETAS DE ESTADO ══════════════════════════════════════════════════ */
+.etiqueta{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:4px 10px; border-radius:100px;
+  font-size:12px; font-weight:600; letter-spacing:.01em;
+  border:1px solid transparent; white-space:nowrap;
+}
+.etiqueta::before{ content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+.et-rascunho{ background: var(--superficie-3); color: var(--texto-2); border-color: var(--borda-forte); }
+.et-enviada{ background: rgba(77,163,255,.12); color: var(--azul); border-color: rgba(77,163,255,.3); }
+.et-aceita{ background: var(--verde-leve); color: var(--verde); border-color: rgba(47,214,127,.3); }
+.et-recusada{ background: var(--vermelho-leve); color: var(--vermelho); border-color: rgba(255,93,99,.3); }
+.et-expirada{ background: var(--ambar-leve); color: var(--ambar); border-color: rgba(255,176,46,.3); }
+.et-substituida{ background: var(--superficie-2); color: var(--texto-3); border-color: var(--borda); }
+
+/* ═══ CARREGANDO ═══════════════════════════════════════════════════════════ */
+.girando{
+  width:18px; height:18px; border-radius:50%;
+  border:2px solid rgba(255,255,255,.2); border-top-color:#fff;
+  animation: gira .7s linear infinite;
+}
+@keyframes gira{ to{ transform: rotate(360deg); } }
+
+.esqueleto{
+  background: linear-gradient(90deg, var(--superficie-2) 25%, var(--superficie-3) 50%, var(--superficie-2) 75%);
+  background-size: 200% 100%;
+  animation: brilha 1.4s ease-in-out infinite;
+  border-radius: var(--raio-p);
+}
+@keyframes brilha{ to{ background-position: -200% 0; } }
+
+/* ★★★ quem pediu menos movimento recebe menos movimento, em todo o sistema */
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{
+    animation-duration:.01ms !important; animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
