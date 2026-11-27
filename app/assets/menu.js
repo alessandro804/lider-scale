@@ -40,6 +40,45 @@ const ICONES = {
   saude:'<path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>',
 };
 
+// ═══════════════════════════════════════════════════════════════════════════
+// O PAINEL DA PESSOA · um conteudo so, usado no topo e no pe
+// ═══════════════════════════════════════════════════════════════════════════
+// ★★★★ ELE ABRE EM DOIS LUGARES e tem de ser identico nos dois. Escrito duas
+//   vezes, basta acrescentar um item num deles para os dois passarem a
+//   mostrar coisas diferentes conforme onde a pessoa clicou, e ninguem
+//   entende por que.
+function gotaDaPessoa() {
+  const u = Sessao.usuario();
+  const nome = u.nome || 'Usuario';
+  const papel = t('papel.' + (u.papel || 'closer'));
+
+  // ★★★ os itens que ainda nao existem aparecem apagados, nunca clicaveis.
+  //   Item que leva a lugar nenhum ensina a pessoa a desconfiar do menu.
+  const emBreve = [
+    ['planos', '<path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path>'],
+    ['perfil', '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>'],
+    ['ajuda',  '<circle cx="12" cy="12" r="10"></circle><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"></path><path d="M12 17h.01"></path>'],
+  ].map(function (x) {
+    return '<div class="gota-item apagado">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      x[1] + '</svg>' + t('pessoa.' + x[0]) +
+      '<svg class="gota-breve" width="13" height="13" viewBox="0 0 24 24" fill="none" ' +
+      'stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<circle cx="12" cy="12" r="10"></circle><path d="M12 7v5l3 2"></path></svg></div>';
+  }).join('');
+
+  return '<div class="gota-quem">' + nome + '</div>' +
+    '<div class="gota-email">' + (u.email || '') + '</div>' +
+    '<div class="gota-papel">' + papel + '</div>' +
+    '<div class="gota-risca"></div>' +
+    emBreve +
+    '<div class="gota-risca"></div>' +
+    '<button class="gota-item sair" data-sair="1">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' +
+      t('menu.sair') + '</button>';
+}
+
 const Menu = {
   montar(atual) {
     const papel = (Sessao.usuario().papel) || 'closer';
@@ -77,7 +116,8 @@ const Menu = {
 
       const destino = it.id === 'inicio' ? base : base + it.id + '/';
       html += '<a href="' + destino + '" class="sb-item' + (it.id === atual ? ' ativo' : '') + '">' +
-        icone + t('menu.' + it.id) + '</a>';
+        '<span class="sb-ico">' + icone + '</span>' +
+        '<span class="sb-txt">' + t('menu.' + it.id) + '</span></a>';
     }
 
     const u = Sessao.usuario();
@@ -90,9 +130,14 @@ const Menu = {
         '<span>Lider <i>Scale</i></span></div>' +
       '<nav class="sb-menu">' + html + '</nav>' +
       '<div class="sb-rodape">' +
-        '<div class="sb-item" id="menuSair">' +
-          '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
-          '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' + t('menu.sair') + '</div>' +
+        '<div class="canto canto-pe">' +
+          '<button class="sb-pessoa" id="btnPessoaPe">' +
+            '<span class="bolha">' + iniciais + '</span>' +
+            '<span class="sb-pessoa-txt"><span class="quem">' + nome + '</span>' +
+            '<span class="papel">' + papelNaTela + '</span></span>' +
+          '</button>' +
+          '<div class="gota gota-larga gota-acima" id="gotaPessoaPe">' + gotaDaPessoa() + '</div>' +
+        '</div>' +
       '</div>';
 
     // ═══════════════════════════════════════════════════════════════════
@@ -130,16 +175,7 @@ const Menu = {
           '<button class="canto-pessoa" id="btnPessoa" aria-label="' + nome + '">' +
             '<span class="bolha">' + iniciais + '</span>' +
           '</button>' +
-          '<div class="gota gota-larga" id="gotaPessoa">' +
-            '<div class="gota-quem">' + nome + '</div>' +
-            '<div class="gota-email">' + (u.email || '') + '</div>' +
-            '<div class="gota-papel">' + papelNaTela + '</div>' +
-            '<div class="gota-risca"></div>' +
-            '<button class="gota-item sair" id="gotaSair">' +
-              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
-              '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' +
-              t('menu.sair') + '</button>' +
-          '</div>' +
+          '<div class="gota gota-larga" id="gotaPessoa">' + gotaDaPessoa() + '</div>' +
         '</div>';
 
       // ★★★ so uma gota aberta por vez, e clique fora fecha. Duas abertas ao
@@ -160,6 +196,7 @@ const Menu = {
       }
       ligarGota('btnGlobo', 'gotaIdioma');
       ligarGota('btnPessoa', 'gotaPessoa');
+      ligarGota('btnPessoaPe', 'gotaPessoaPe');
       document.addEventListener('click', () => fecharGotas());
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharGotas(); });
       document.querySelectorAll('.gota').forEach(function (g) {
@@ -169,7 +206,7 @@ const Menu = {
       document.querySelectorAll('#gotaIdioma .gota-item').forEach(function (b) {
         b.addEventListener('click', () => Idioma.trocar(b.dataset.lang));
       });
-      document.getElementById('gotaSair').addEventListener('click', sair);
+      document.querySelectorAll('[data-sair]').forEach((b) => b.addEventListener('click', sair));
     }
 
     async function sair() {
@@ -177,7 +214,7 @@ const Menu = {
       Sessao.limpar();
       window.location.href = base + 'login/';
     }
-    document.getElementById('menuSair').addEventListener('click', sair);
+
   },
 };
 

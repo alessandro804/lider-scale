@@ -17,7 +17,7 @@ body{ display:flex; min-height:100vh; }
 
 /* ── barra lateral ── */
 .sidebar{
-  width: var(--lateral); flex:0 0 auto;
+  width: var(--lateral); flex:0 0 auto; overflow-x:hidden;
   background: var(--superficie); border-right:1px solid var(--borda);
   display:flex; flex-direction:column; position:fixed; top:0; left:0; height:100vh; z-index:20;
 }
@@ -26,12 +26,21 @@ body{ display:flex; min-height:100vh; }
 .sb-marca span{ font-size:17px; font-weight:750; letter-spacing:-.02em; }
 .sb-marca span i{ font-style:normal; color: var(--violeta-300); }
 
-.sb-menu{ flex:1; padding:6px 10px; overflow-y:auto; }
+.sb-menu{ flex:1; padding:6px 10px; overflow-y:auto; overflow-x:hidden; }
+/* ★★★ NADA AQUI PODE ESTOURAR A LARGURA. Nome de item e mais longo em
+   ingles e em espanhol; sem `min-width:0` e o corte no texto, o flex deixa o
+   item crescer e a lateral inteira ganha rolagem horizontal. */
 .sb-item{
   display:flex; align-items:center; gap:11px;
   padding:10px 12px; border-radius:var(--raio-p); margin-bottom:2px;
   color: var(--texto-2); font-size:14px; font-weight:550; cursor:pointer;
   transition: var(--transicao); border:1px solid transparent;
+  min-width:0; overflow:hidden;
+}
+.sb-ico{ display:flex; flex:0 0 auto; }
+.sb-txt{
+  flex:1 1 auto; min-width:0;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
 }
 .sb-item:hover{ background: var(--superficie-2); color: var(--texto); }
 .sb-item.ativo{
@@ -129,16 +138,11 @@ a.sb-item{ text-decoration:none; }
 /* ── tela que ainda nao chegou ──────────────────────────────────────────── */
 .sb-em-breve{ opacity:.42; cursor:default; }
 .sb-em-breve:hover{ background:transparent; color: var(--texto-2); }
-.sb-breve{
-  /* ★★ `nowrap` porque "coming soon" e "proximamente" sao mais longos que
-     "em breve": sem isto a etiqueta quebra em duas linhas e empurra o item
-     do menu, e o desalinho so aparece nos outros idiomas. */
-  margin-left:auto; flex:0 0 auto; white-space:nowrap;
-  font-size:9.5px; font-weight:700; letter-spacing:.04em;
-  text-transform:uppercase; color: var(--texto-3);
-  border:1px solid var(--borda); border-radius:100px; padding:1px 6px;
-}
-.sb-item{ white-space:nowrap; }
+/* ★★★★ UM ICONE, NAO UMA ETIQUETA DE TEXTO. "em breve" cabia; "coming soon"
+   e "proximamente" nao, e a barra lateral ganhava rolagem horizontal em duas
+   das tres linguas. Largura fixa com texto traduzivel dentro so funciona ate
+   alguem traduzir. O `title` conta o que o icone quer dizer, no idioma. */
+.sb-breve{ margin-left:auto; flex:0 0 auto; color: var(--texto-3); opacity:.85; }
 
 /* ── o seletor de idioma, no pe da lateral ──────────────────────────────── */
 .sb-idiomas{ display:flex; gap:6px; padding:4px 12px 2px; }
@@ -220,3 +224,33 @@ a.sb-item{ text-decoration:none; }
 .gota-risca{ height:1px; background: var(--borda); margin:5px 2px; }
 
 @media (max-width:560px){ .gota{ right:-4px; } }
+
+/* ── a pessoa no pe da lateral, clicavel ────────────────────────────────── */
+.canto-pe{ position:relative; }
+.sb-pessoa{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:9px 11px; border-radius: var(--raio-p);
+  background:transparent; border:1px solid transparent; cursor:pointer;
+  font-family:inherit; text-align:left; transition: var(--transicao);
+}
+.sb-pessoa:hover{ background: var(--superficie-2); border-color: var(--borda); }
+.sb-pessoa .bolha{
+  width:32px; height:32px; border-radius:50%; flex:0 0 auto;
+  background: linear-gradient(135deg, var(--violeta), var(--violeta-800));
+  display:flex; align-items:center; justify-content:center;
+  font-size:12.5px; font-weight:700; color:#fff;
+}
+.sb-pessoa-txt{ display:flex; flex-direction:column; min-width:0; }
+.sb-pessoa .quem{
+  font-size:13px; font-weight:620; color: var(--texto); line-height:1.3;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sb-pessoa .papel{ font-size:11.5px; color: var(--texto-3); }
+
+/* ★★ a gota do pe abre para CIMA: aberta para baixo, ela sai da tela, e a
+   pessoa so ve a borda de cima do painel. */
+.gota-acima{ top:auto; bottom:calc(100% + 9px); left:0; right:auto; }
+
+.gota-item.apagado{ opacity:.42; cursor:default; }
+.gota-item.apagado:hover{ background:transparent; color: var(--texto-2); }
+.gota-breve{ margin-left:auto; flex:0 0 auto; color: var(--texto-3); opacity:.8; }

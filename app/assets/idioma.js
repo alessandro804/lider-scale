@@ -41,6 +41,10 @@ const TEXTOS = {
     'menu.embreve': 'em breve',
     'menu.idioma': 'Idioma',
 
+    'pessoa.planos': 'Planos',
+    'pessoa.perfil': 'Meu perfil',
+    'pessoa.ajuda': 'Ajuda',
+
     'papel.super_adm': 'Super ADM',
     'papel.dono': 'Dono da conta',
     'papel.gestor': 'Gestor',
@@ -133,6 +137,14 @@ const TEXTOS = {
     'menu.embreve': 'coming soon',
     'menu.idioma': 'Language',
 
+    'pessoa.planos': 'Plans',
+    'pessoa.perfil': 'My profile',
+    'pessoa.ajuda': 'Help',
+
+    'pessoa.planos': 'Plans',
+    'pessoa.perfil': 'My profile',
+    'pessoa.ajuda': 'Help',
+
     'papel.super_adm': 'Super admin',
     'papel.dono': 'Account owner',
     'papel.gestor': 'Manager',
@@ -224,6 +236,10 @@ const TEXTOS = {
     'menu.sair': 'Salir',
     'menu.embreve': 'proximamente',
     'menu.idioma': 'Idioma',
+
+    'pessoa.planos': 'Planes',
+    'pessoa.perfil': 'Mi perfil',
+    'pessoa.ajuda': 'Ayuda',
 
     'papel.super_adm': 'Super admin',
     'papel.dono': 'Dueno de la cuenta',
