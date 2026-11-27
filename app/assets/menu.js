@@ -90,29 +90,94 @@ const Menu = {
         '<span>Lider <i>Scale</i></span></div>' +
       '<nav class="sb-menu">' + html + '</nav>' +
       '<div class="sb-rodape">' +
-        '<div class="sb-pessoa"><div class="bolha">' + iniciais + '</div>' +
-          '<div><div class="quem">' + nome + '</div>' +
-          '<div class="papel">' + papelNaTela + '</div></div></div>' +
         '<div class="sb-item" id="menuSair">' +
           '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
           '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' + t('menu.sair') + '</div>' +
-        '<div class="sb-idiomas">' +
-          Idioma.IDIOMAS.map(function (i) {
-            return '<button class="sb-lang' + (i.id === Idioma.escolhido() ? ' atual' : '') +
-                   '" data-lang="' + i.id + '" title="' + i.nome + '">' + i.bandeira + '</button>';
-          }).join('') +
-        '</div>' +
       '</div>';
 
-    document.querySelectorAll('.sb-lang').forEach(function (b) {
-      b.addEventListener('click', () => Idioma.trocar(b.dataset.lang));
-    });
+    // ═══════════════════════════════════════════════════════════════════
+    // O CANTO SUPERIOR DIREITO · globo e pessoa, como no Lider 10
+    // ═══════════════════════════════════════════════════════════════════
+    // ★★★★ O MESMO CANTO EM TODA TELA. Controle que muda de lugar conforme
+    //   a pagina obriga a pessoa a procurar de novo a cada tela; o canto
+    //   superior direito e onde a mao ja vai sozinha.
+    const topoDir = document.querySelector('.topo-dir');
+    if (topoDir) {
+      topoDir.innerHTML =
+        '<div class="canto">' +
+          '<button class="canto-btn" id="btnGlobo" title="' + t('menu.idioma') + '" aria-label="' + t('menu.idioma') + '">' +
+            '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' +
+              '<circle cx="12" cy="12" r="10"></circle>' +
+              '<path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>' +
+              '<path d="M2 12h20"></path>' +
+            '</svg>' +
+          '</button>' +
+          '<div class="gota" id="gotaIdioma">' +
+            '<div class="gota-titulo">' + t('menu.idioma') + '</div>' +
+            Idioma.IDIOMAS.map(function (i) {
+              return '<button class="gota-item' + (i.id === Idioma.escolhido() ? ' atual' : '') +
+                '" data-lang="' + i.id + '">' +
+                '<span class="gota-sigla">' + i.bandeira + '</span>' + i.nome +
+                (i.id === Idioma.escolhido()
+                  ? '<svg class="gota-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>'
+                  : '') +
+                '</button>';
+            }).join('') +
+          '</div>' +
+        '</div>' +
 
-    document.getElementById('menuSair').addEventListener('click', async function () {
+        '<div class="canto">' +
+          '<button class="canto-pessoa" id="btnPessoa" aria-label="' + nome + '">' +
+            '<span class="bolha">' + iniciais + '</span>' +
+          '</button>' +
+          '<div class="gota gota-larga" id="gotaPessoa">' +
+            '<div class="gota-quem">' + nome + '</div>' +
+            '<div class="gota-email">' + (u.email || '') + '</div>' +
+            '<div class="gota-papel">' + papelNaTela + '</div>' +
+            '<div class="gota-risca"></div>' +
+            '<button class="gota-item sair" id="gotaSair">' +
+              '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>' +
+              t('menu.sair') + '</button>' +
+          '</div>' +
+        '</div>';
+
+      // ★★★ so uma gota aberta por vez, e clique fora fecha. Duas abertas ao
+      //   mesmo tempo se sobrepoem, e gota que nao fecha vira obstaculo.
+      function fecharGotas(menos) {
+        document.querySelectorAll('.gota').forEach(function (g) {
+          if (g !== menos) g.classList.remove('aberta');
+        });
+      }
+      function ligarGota(botao, gota) {
+        document.getElementById(botao).addEventListener('click', function (e) {
+          e.stopPropagation();
+          const g = document.getElementById(gota);
+          const estava = g.classList.contains('aberta');
+          fecharGotas();
+          if (!estava) g.classList.add('aberta');
+        });
+      }
+      ligarGota('btnGlobo', 'gotaIdioma');
+      ligarGota('btnPessoa', 'gotaPessoa');
+      document.addEventListener('click', () => fecharGotas());
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') fecharGotas(); });
+      document.querySelectorAll('.gota').forEach(function (g) {
+        g.addEventListener('click', (e) => e.stopPropagation());
+      });
+
+      document.querySelectorAll('#gotaIdioma .gota-item').forEach(function (b) {
+        b.addEventListener('click', () => Idioma.trocar(b.dataset.lang));
+      });
+      document.getElementById('gotaSair').addEventListener('click', sair);
+    }
+
+    async function sair() {
       try { await chamar('/auth/sair', { method: 'POST' }); } catch (e) {}
       Sessao.limpar();
       window.location.href = base + 'login/';
-    });
+    }
+    document.getElementById('menuSair').addEventListener('click', sair);
   },
 };
 
