@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Proposta comercial</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../app/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   A PROPOSTA QUE O CLIENTE ABRE
+   ═══════════════════════════════════════════════════════════════════════════
+   ★★★★★ ESTA PAGINA NAO CARREGA O base.css NEM O sessao.js, de proposito.
+     Ela e lida por gente que nunca entrou no sistema, muitas vezes no celular
+     e no meio de outra coisa. Cada arquivo a mais e uma chance a mais de a
+     pagina abrir quebrada na frente de quem esta decidindo gastar dinheiro.
+     Tudo que ela precisa esta aqui dentro.
+
+   ★★★★ FUNDO CLARO, ao contrario do painel. O painel e ferramenta de quem
+     trabalha nele o dia inteiro; isto e um documento comercial, que a pessoa
+     pode imprimir, mandar para o socio ou abrir no sol. Documento se le em
+     papel, e papel e branco.
+   ═══════════════════════════════════════════════════════════════════════════ */
+*{ margin:0; padding:0; box-sizing:border-box; }
+:root{
+  --tinta:#17132A; --tinta-2:#4A4466; --tinta-3:#857FA0;
+  --papel:#FFFFFF; --papel-2:#F7F5FC; --borda:#E6E1F2;
+  --violeta:#782CFB; --violeta-escuro:#4A1B9E; --violeta-leve:#F2ECFF;
+  --verde:#0F9D58; --vermelho:#C62828; --ambar:#B06A00;
+  --raio:14px; --raio-p:9px;
+}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background: var(--papel-2); color: var(--tinta);
+  -webkit-font-smoothing:antialiased; line-height:1.55;
+  padding:24px 16px 60px;
+}
+.folha{
+  max-width:720px; margin:0 auto; background: var(--papel);
+  border:1px solid var(--borda); border-radius: var(--raio);
+  box-shadow:0 2px 14px rgba(23,19,42,.07); overflow:hidden;
+}
+
+/* ── a faixa de cima ── */
+.topo{
+  background: linear-gradient(118deg, var(--violeta-escuro), var(--violeta));
+  color:#fff; padding:28px 30px 26px;
+}
+.topo .de{ font-size:12.5px; opacity:.82; letter-spacing:.04em; text-transform:uppercase; font-weight:600; }
+.topo h1{ font-size:24px; font-weight:750; letter-spacing:-.03em; margin:7px 0 4px; }
+.topo .doc{ font-size:13px; opacity:.86; }
+.topo .versao{
+  display:inline-block; margin-top:14px; padding:4px 11px;
+  background:rgba(255,255,255,.16); border-radius:100px;
+  font-size:11.5px; font-weight:650; letter-spacing:.03em;
+}
+
+.corpo{ padding:28px 30px; }
+.secao{ margin-bottom:28px; }
+.secao:last-child{ margin-bottom:0; }
+.rotulo{
+  font-size:11.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  color: var(--tinta-3); margin-bottom:11px;
+}
+
+/* ── para quem ── */
+.para{ background: var(--papel-2); border-radius: var(--raio-p); padding:15px 17px; }
+.para .nome{ font-size:16px; font-weight:680; }
+.para .linha{ font-size:13.5px; color: var(--tinta-2); margin-top:3px; }
+
+/* ── os itens ── */
+.item{
+  display:flex; justify-content:space-between; align-items:flex-start; gap:16px;
+  padding:14px 0; border-bottom:1px solid var(--borda);
+}
+.item:last-of-type{ border-bottom:none; }
+.item .nome{ font-size:15px; font-weight:600; }
+.item .obs{ font-size:12.5px; color: var(--tinta-3); margin-top:2px; }
+.item .valor{ font-size:15px; font-weight:680; white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+.total{
+  display:flex; justify-content:space-between; align-items:baseline;
+  margin-top:16px; padding-top:16px; border-top:2px solid var(--tinta);
+}
+.total .rot{ font-size:14px; font-weight:650; }
+.total .val{ font-size:27px; font-weight:780; letter-spacing:-.03em; font-variant-numeric:tabular-nums; }
+
+/* ── as parcelas ── */
+.parcela{
+  display:flex; justify-content:space-between; align-items:center; gap:14px;
+  padding:12px 15px; background: var(--papel-2);
+  border-radius: var(--raio-p); margin-bottom:8px;
+}
+.parcela.sinal{ background: var(--violeta-leve); border:1px solid rgba(120,44,251,.22); }
+.parcela .q{ font-size:14px; font-weight:580; }
+.parcela .marca{
+  display:inline-block; margin-left:8px; padding:2px 8px; border-radius:100px;
+  background: var(--violeta); color:#fff; font-size:10.5px; font-weight:700;
+  letter-spacing:.04em; text-transform:uppercase; vertical-align:1px;
+}
+.parcela .v{ font-size:14.5px; font-weight:680; white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+.obs-caixa{
+  background: var(--papel-2); border-left:3px solid var(--violeta);
+  border-radius:0 var(--raio-p) var(--raio-p) 0; padding:14px 17px;
+  font-size:14px; color: var(--tinta-2); white-space:pre-wrap;
+}
+
+/* ── o rodape, com a validade ── */
+.rodape{
+  border-top:1px solid var(--borda); padding:20px 30px 26px;
+  background: var(--papel-2); font-size:13px; color: var(--tinta-2);
+}
+.rodape .prazo{ font-weight:650; color: var(--tinta); }
+.assinado{
+  margin-top:14px; padding:13px 16px; background:#EAF7EF;
+  border:1px solid #BFE3CC; border-radius: var(--raio-p);
+  font-size:13.5px; color:#0B6B3C;
+}
+
+/* ── os estados que nao sao "proposta aberta" ── */
+.recado{ max-width:480px; margin:60px auto; text-align:center; padding:0 20px; }
+.recado .ico{ margin-bottom:16px; color: var(--tinta-3); }
+.recado h2{ font-size:19px; font-weight:700; margin-bottom:8px; }
+.recado p{ font-size:14.5px; color: var(--tinta-2); }
+.esqueleto{
+  background: linear-gradient(90deg, #EFEBF8 25%, #F7F5FC 50%, #EFEBF8 75%);
+  background-size:200% 100%; animation: brilho 1.4s infinite; border-radius:8px;
+}
+@keyframes brilho{ 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
+
+@media print{
+  body{ background:#fff; padding:0; }
+  .folha{ border:none; box-shadow:none; max-width:none; }
+}
+@media (max-width:560px){
+  .topo,.corpo,.rodape{ padding-left:20px; padding-right:20px; }
+  .topo h1{ font-size:21px; }
+  .total .val{ font-size:23px; }
+}
+</style>
+</head>
+<body>
+
+<div id="tela">
+  <div class="folha">
+    <div class="topo"><div class="esqueleto" style="height:62px;background:rgba(255,255,255,.18)"></div></div>
+    <div class="corpo">
+      <div class="esqueleto" style="height:76px;margin-bottom:26px"></div>
+      <div class="esqueleto" style="height:140px"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const API = 'https://api.scale.lidercommerce.com.br';
+
+function texto(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function recado(titulo, corpo){
+  document.getElementById('tela').innerHTML =
+    '<div class="recado">' +
+      '<svg class="ico" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">' +
+        '<circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg>' +
+      '<h2>' + texto(titulo) + '</h2><p>' + texto(corpo) + '</p>' +
+    '</div>';
+}
+
+function dataBR(iso){
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+  } catch (e) { return ''; }
+}
+
+function desenhar(p){
+  const itens = p.itens.map(function (i) {
+    const qtd = i.quantidade > 1 ? '<div class="obs">' + i.quantidade + ' unidades</div>' : '';
+    const rec = i.recorrente ? '<div class="obs">cobranca ' + texto(i.ciclo || 'mensal') + '</div>' : '';
+    return '<div class="item"><div><div class="nome">' + texto(i.nome) + '</div>' + qtd + rec +
+           '</div><div class="valor">' + texto(i.valor) + '</div></div>';
+  }).join('');
+
+  const parcelas = p.parcelas.map(function (x) {
+    return '<div class="parcela' + (x.eh_sinal ? ' sinal' : '') + '">' +
+      '<div class="q">' + texto(x.nome) + (x.eh_sinal ? '<span class="marca">entrada</span>' : '') + '</div>' +
+      '<div class="v">' + texto(x.valor) + '</div></div>';
+  }).join('');
+
+  const obs = p.observacao
+    ? '<div class="secao"><div class="rotulo">Observacoes</div><div class="obs-caixa">' + texto(p.observacao) + '</div></div>'
+    : '';
+
+  /* ★★★ a validade em vermelho so quando ja passou. Antes disso e informacao,
+     nao alerta, e informacao em vermelho treina a pessoa a ignorar vermelho. */
+  const venceu = p.estado === 'expirada';
+  const prazo = venceu
+    ? '<span style="color:var(--vermelho);font-weight:650">Esta proposta venceu em ' + texto(dataBR(p.validade_em)) + '.</span> Fale com quem enviou para receber uma atualizada.'
+    : 'Esta proposta vale ate <span class="prazo">' + texto(dataBR(p.validade_em)) + '</span>.';
+
+  const aceita = p.estado === 'aceita'
+    ? '<div class="assinado">Proposta aceita em ' + texto(dataBR(p.aceita_em)) +
+      (p.aceite_nome ? ' por ' + texto(p.aceite_nome) : '') + '.</div>'
+    : '';
+
+  document.getElementById('tela').innerHTML =
+    '<div class="folha">' +
+      '<div class="topo">' +
+        '<div class="de">Proposta de ' + texto(p.de.nome) + '</div>' +
+        '<h1>' + texto(p.cliente.empresa || p.cliente.nome) + '</h1>' +
+        (p.cliente.empresa && p.cliente.nome ? '<div class="doc">Aos cuidados de ' + texto(p.cliente.nome) + '</div>' : '') +
+        '<div class="versao">Versao ' + texto(p.versao) + ' · ' + texto(dataBR(p.enviada_em)) + '</div>' +
+      '</div>' +
+      '<div class="corpo">' +
+        '<div class="secao"><div class="rotulo">O que esta incluido</div>' + itens +
+          '<div class="total"><div class="rot">Total</div><div class="val">' + texto(p.total) + '</div></div>' +
+        '</div>' +
+        '<div class="secao"><div class="rotulo">Como fica o pagamento</div>' + parcelas + '</div>' +
+        obs +
+      '</div>' +
+      '<div class="rodape">' + prazo + aceita + '</div>' +
+    '</div>';
+
+  document.title = 'Proposta · ' + (p.cliente.empresa || p.cliente.nome);
+}
+
+(async function abrir(){
+  const t = new URLSearchParams(window.location.search).get('t');
+  if (!t) {
+    recado('Link incompleto', 'Confira se o endereco foi copiado inteiro, ate o fim.');
+    return;
+  }
+  try {
+    const corta = new AbortController();
+    const relogio = setTimeout(() => corta.abort(), 20000);
+    let r;
+    try { r = await fetch(API + '/p/' + encodeURIComponent(t), { signal: corta.signal }); }
+    finally { clearTimeout(relogio); }
+
+    const dados = await r.json().catch(() => null);
+    if (!r.ok || !dados || dados.ok === false) {
+      /* ★★★ MESMO RECADO para link errado, proposta apagada e rascunho: a
+         pagina nunca conta a quem tentou adivinhar que aquele link existe. */
+      recado('Esta proposta nao esta disponivel',
+             'O link pode ter expirado ou sido substituido por uma versao mais nova. Fale com quem enviou.');
+      return;
+    }
+    desenhar(dados.proposta);
+  } catch (e) {
+    recado('Nao foi possivel abrir a proposta',
+           'Confira sua conexao com a internet e tente de novo em instantes.');
+  }
+})();
+</script>
+</body>
+</html>

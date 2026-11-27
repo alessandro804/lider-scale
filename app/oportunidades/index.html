@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Oportunidades · Lider Scale</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/painel.css">
+<style>
+/* ── a lista ── */
+.linha-op{
+  display:flex; align-items:center; gap:16px; padding:15px 18px;
+  background: var(--superficie); border:1px solid var(--borda);
+  border-radius: var(--raio); margin-bottom:9px;
+  transition: var(--transicao); cursor:pointer;
+}
+.linha-op:hover{ border-color: var(--violeta-800); background: var(--superficie-2); }
+.linha-op .quem{ flex:1; min-width:0; }
+.linha-op .emp{ font-size:14.5px; font-weight:620; }
+.linha-op .pes{ font-size:12.5px; color: var(--texto-3); margin-top:2px; }
+.linha-op .dir{ text-align:right; flex:0 0 auto; }
+
+/* ── a gaveta de montar proposta ── */
+.gaveta{
+  position:fixed; inset:0; background:rgba(5,3,10,.72);
+  display:none; align-items:flex-end; justify-content:center; z-index:60;
+  backdrop-filter: blur(3px);
+}
+.gaveta.aberta{ display:flex; }
+.gaveta-folha{
+  background: var(--superficie); border:1px solid var(--borda);
+  border-radius: var(--raio-g) var(--raio-g) 0 0;
+  width:100%; max-width:640px; max-height:92vh; overflow-y:auto;
+  padding:24px 26px 28px;
+}
+@media (min-width:700px){
+  .gaveta{ align-items:center; }
+  .gaveta-folha{ border-radius: var(--raio-g); }
+}
+.gaveta h2{ font-size:19px; font-weight:720; letter-spacing:-.02em; margin-bottom:5px; }
+.gaveta .sub{ font-size:13.5px; color: var(--texto-2); margin-bottom:20px; }
+
+.prod{
+  display:flex; align-items:center; gap:13px; padding:12px 14px;
+  border:1px solid var(--borda); border-radius: var(--raio-p);
+  margin-bottom:8px; cursor:pointer; transition: var(--transicao);
+}
+.prod:hover{ border-color: var(--violeta-800); }
+.prod.escolhido{ border-color: var(--violeta); background: rgba(120,44,251,.09); }
+.prod .marca{
+  width:19px; height:19px; border-radius:5px; flex:0 0 auto;
+  border:2px solid var(--borda-forte); display:flex; align-items:center; justify-content:center;
+}
+.prod.escolhido .marca{ background: var(--violeta); border-color: var(--violeta); }
+.prod .n{ flex:1; font-size:14px; font-weight:570; }
+.prod .p{ font-size:13.5px; font-weight:650; font-variant-numeric:tabular-nums; }
+.prod .s{ font-size:11.5px; color: var(--texto-3); }
+
+.resumo{
+  background: var(--superficie-2); border-radius: var(--raio-p);
+  padding:14px 16px; margin:16px 0 18px;
+}
+.resumo .l{ display:flex; justify-content:space-between; font-size:13.5px; padding:4px 0; }
+.resumo .l.tot{ font-size:16px; font-weight:720; border-top:1px solid var(--borda); margin-top:7px; padding-top:10px; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<div class="conteudo">
+  <header class="topo">
+    <h1>Oportunidades</h1>
+    <div class="topo-dir">
+      <button class="btn btn-principal" id="btnNova">Nova oportunidade</button>
+    </div>
+  </header>
+
+  <main class="area">
+    <div id="aviso"></div>
+    <div id="lista">
+      <div class="esqueleto" style="height:62px;margin-bottom:9px"></div>
+      <div class="esqueleto" style="height:62px;margin-bottom:9px"></div>
+    </div>
+  </main>
+</div>
+
+<!-- montar proposta -->
+<div class="gaveta" id="gaveta">
+  <div class="gaveta-folha">
+    <h2 id="gavetaTitulo">Montar proposta</h2>
+    <div class="sub" id="gavetaSub">Escolha o que entra.</div>
+    <div id="gavetaAviso"></div>
+    <div id="produtos"></div>
+    <div class="resumo" id="resumo"></div>
+    <div class="campo">
+      <label for="validade">Vale por quantos dias</label>
+      <input type="number" id="validade" value="7" min="1" max="90">
+    </div>
+    <div class="campo">
+      <label for="observacao">Observacoes para o cliente</label>
+      <textarea id="observacao" rows="3" placeholder="O que mais ele precisa saber"></textarea>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:6px">
+      <button class="btn btn-secundario" id="btnCancelar" style="flex:0 0 auto">Cancelar</button>
+      <button class="btn btn-principal" id="btnMontar" style="flex:1">Montar e enviar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../assets/sessao.js"></script>
+<script src="../assets/menu.js"></script>
+<script>
+'use strict';
+if (!Sessao.exigir()) throw new Error('sem sessao');
+
+const el = (id) => document.getElementById(id);
+const esc = (s) => String(s == null ? '' : s)
+  .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+Menu.montar('oportunidades');
+
+let catalogo = [];
+let escolhidos = {};        // produto_id -> quantidade
+let oportAberta = null;
+
+function erro(onde, texto){
+  el(onde).innerHTML =
+    '<div class="aviso aviso-erro"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg><span>' + esc(texto) + '</span></div>';
+}
+function certo(onde, html){
+  el(onde).innerHTML =
+    '<div class="aviso aviso-certo"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg><span>' + html + '</span></div>';
+}
+function limpar(onde){ el(onde).innerHTML = ''; }
+
+/* ── a lista de oportunidades ─────────────────────────────────────────── */
+async function carregar(){
+  try {
+    const r = await chamar('/oportunidades');
+    if (!r.oportunidades.length) {
+      el('lista').innerHTML =
+        '<div class="cartao"><div class="cartao-titulo">Nenhuma oportunidade ainda</div>' +
+        '<div class="cartao-sub">Cadastre a primeira e monte uma proposta em menos de um minuto.</div></div>';
+      return;
+    }
+    el('lista').innerHTML = r.oportunidades.map(function (o) {
+      return '<div class="linha-op" data-id="' + o.id + '">' +
+        '<div class="quem"><div class="emp">' + esc(o.cliente_empresa || o.titulo) + '</div>' +
+          '<div class="pes">' + esc(o.cliente_nome || 'sem contato') + '</div></div>' +
+        '<div class="dir"><span class="etiqueta">' + esc(o.etapa || 'novo') + '</span></div>' +
+      '</div>';
+    }).join('');
+
+    el('lista').querySelectorAll('.linha-op').forEach(function (linha) {
+      linha.addEventListener('click', function () {
+        const o = r.oportunidades.find((x) => String(x.id) === linha.dataset.id);
+        abrirGaveta(o);
+      });
+    });
+  } catch (e) {
+    erro('aviso', e.message);
+  }
+}
+
+/* ── a gaveta ─────────────────────────────────────────────────────────── */
+function abrirGaveta(o){
+  oportAberta = o;
+  escolhidos = {};
+  limpar('gavetaAviso');
+  el('gavetaTitulo').textContent = 'Proposta para ' + (o.cliente_empresa || o.titulo);
+  el('gavetaSub').textContent = 'Escolha o que entra. As parcelas saem das etapas de entrega de cada item.';
+  el('btnMontar').disabled = false;
+  el('btnMontar').textContent = 'Montar e enviar';
+  desenharProdutos();
+  el('gaveta').classList.add('aberta');
+}
+
+function desenharProdutos(){
+  el('produtos').innerHTML = catalogo.map(function (p) {
+    const on = escolhidos[p.id] ? ' escolhido' : '';
+    const sinal = p.exige_sinal ? '<div class="s">entrada de ' + esc(p.sinal_percentual) + '%</div>' : '';
+    return '<div class="prod' + on + '" data-id="' + p.id + '">' +
+      '<div class="marca">' + (escolhidos[p.id] ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg>' : '') + '</div>' +
+      '<div class="n">' + esc(p.nome) + sinal + '</div>' +
+      '<div class="p">' + emReais(p.preco_centavos) + '</div>' +
+    '</div>';
+  }).join('');
+
+  el('produtos').querySelectorAll('.prod').forEach(function (d) {
+    d.addEventListener('click', function () {
+      const id = Number(d.dataset.id);
+      if (escolhidos[id]) delete escolhidos[id]; else escolhidos[id] = 1;
+      desenharProdutos();
+    });
+  });
+  desenharResumo();
+}
+
+function desenharResumo(){
+  const ids = Object.keys(escolhidos);
+  if (!ids.length) {
+    el('resumo').innerHTML = '<div class="l" style="color:var(--texto-3)">Nada escolhido ainda</div>';
+    return;
+  }
+  let total = 0;
+  const linhas = ids.map(function (id) {
+    const p = catalogo.find((x) => String(x.id) === String(id));
+    total += p.preco_centavos * escolhidos[id];
+    return '<div class="l"><span>' + esc(p.nome) + '</span><span>' + emReais(p.preco_centavos * escolhidos[id]) + '</span></div>';
+  }).join('');
+  el('resumo').innerHTML = linhas + '<div class="l tot"><span>Total</span><span>' + emReais(total) + '</span></div>';
+}
+
+el('btnCancelar').addEventListener('click', () => el('gaveta').classList.remove('aberta'));
+el('gaveta').addEventListener('click', function (e) {
+  if (e.target === el('gaveta')) el('gaveta').classList.remove('aberta');
+});
+
+el('btnMontar').addEventListener('click', async function () {
+  limpar('gavetaAviso');
+  const itens = Object.keys(escolhidos).map((id) => ({ produto_id: Number(id), quantidade: escolhidos[id] }));
+  if (!itens.length) return erro('gavetaAviso', 'Escolha ao menos um item para a proposta.');
+
+  const b = el('btnMontar');
+  b.disabled = true;
+  b.innerHTML = '<span class="girando"></span> Montando';
+  try {
+    const nova = await chamar('/propostas', {
+      method: 'POST',
+      body: JSON.stringify({
+        oportunidade_id: oportAberta.id,
+        validade_dias: Number(el('validade').value) || 7,
+        observacao: el('observacao').value.trim() || null,
+        itens,
+      }),
+    });
+    const env = await chamar('/propostas/' + nova.proposta.id + '/enviar', { method: 'POST', body: '{}' });
+
+    /* ★★★ O LINK APARECE PRONTO PARA COPIAR. Quem acabou de montar vai
+       mandar no WhatsApp no segundo seguinte; fazer a pessoa procurar o
+       link numa lista depois e um passo que nao precisa existir. */
+    certo('gavetaAviso',
+      'Proposta enviada. O link do cliente e:<br><br>' +
+      '<span style="word-break:break-all;font-size:12.5px;color:var(--violeta-200)">' + esc(env.link) + '</span>');
+    b.textContent = 'Copiar o link';
+    b.disabled = false;
+    b.onclick = function () {
+      try {
+        navigator.clipboard.writeText(env.link);
+        b.textContent = 'Link copiado';
+        setTimeout(() => { b.textContent = 'Copiar o link'; }, 2000);
+      } catch (e) {
+        /* ★★ area de transferencia negada pelo navegador nao e erro: o link
+           esta na tela, a pessoa seleciona e copia. */
+        b.textContent = 'Selecione o link acima para copiar';
+      }
+    };
+  } catch (e) {
+    b.disabled = false;
+    b.textContent = 'Montar e enviar';
+    erro('gavetaAviso', e.message);
+  }
+});
+
+/* ── nova oportunidade ────────────────────────────────────────────────── */
+el('btnNova').addEventListener('click', function () {
+  window.location.href = 'nova/';
+});
+
+(async function comecar(){
+  try {
+    const c = await chamar('/catalogo');
+    catalogo = c.produtos;
+  } catch (e) { erro('aviso', e.message); }
+  carregar();
+})();
+</script>
+</body>
+</html>

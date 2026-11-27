@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova oportunidade · Lider Scale</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="../../assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/base.css">
+<link rel="stylesheet" href="../../assets/painel.css">
+<style>
+.folha{ max-width:580px; }
+.dupla{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media (max-width:520px){ .dupla{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+
+<aside class="sidebar" id="sidebar"></aside>
+
+<div class="conteudo">
+  <header class="topo"><h1>Nova oportunidade</h1></header>
+  <main class="area">
+    <div class="cartao folha">
+      <div class="cartao-titulo">Quem e o cliente</div>
+      <div class="cartao-sub">So o nome da empresa e obrigatorio. O resto da para completar depois.</div>
+
+      <div id="aviso"></div>
+
+      <form id="forma" novalidate>
+        <div class="campo">
+          <label for="empresa">Empresa</label>
+          <input type="text" id="empresa" autocomplete="organization" placeholder="Nome da empresa do cliente" required>
+        </div>
+        <div class="dupla">
+          <div class="campo">
+            <label for="contato">Pessoa de contato</label>
+            <input type="text" id="contato" placeholder="Quem decide">
+          </div>
+          <div class="campo">
+            <label for="whatsapp">WhatsApp</label>
+            <input type="tel" id="whatsapp" inputmode="numeric" placeholder="(31) 99999-9999">
+          </div>
+        </div>
+        <div class="dupla">
+          <div class="campo">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" autocomplete="off" placeholder="contato@empresa.com.br">
+          </div>
+          <div class="campo">
+            <label for="documento">CPF ou CNPJ</label>
+            <input type="text" id="documento" inputmode="numeric" placeholder="00.000.000/0000-00">
+          </div>
+        </div>
+        <div class="campo">
+          <label for="origem">Como chegou</label>
+          <select id="origem">
+            <option value="">— escolher —</option>
+            <option value="indicacao">Indicacao</option>
+            <option value="instagram">Instagram</option>
+            <option value="google">Google</option>
+            <option value="prospeccao">Prospeccao ativa</option>
+            <option value="evento">Evento</option>
+            <option value="outro">Outro</option>
+          </select>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <a href="../" class="btn btn-secundario" style="flex:0 0 auto;text-decoration:none">Voltar</a>
+          <button type="submit" class="btn btn-principal" id="btnSalvar" style="flex:1">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>
+
+<script src="../../assets/sessao.js"></script>
+<script src="../../assets/menu.js"></script>
+<script>
+'use strict';
+if (!Sessao.exigir()) throw new Error('sem sessao');
+const el = (id) => document.getElementById(id);
+Menu.montar('oportunidades');
+
+const so = (v) => String(v || '').replace(/\D/g, '');
+
+el('whatsapp').addEventListener('input', function () {
+  const d = so(this.value).slice(0, 11);
+  this.value = d.length <= 10
+    ? d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{4})(\d{1,4})$/, '$1-$2')
+    : d.replace(/^(\d{2})(\d)/, '($1) $2').replace(/(\d{5})(\d{1,4})$/, '$1-$2');
+});
+el('documento').addEventListener('input', function () {
+  const d = so(this.value).slice(0, 14);
+  this.value = d.length <= 11
+    ? d.replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d)/, '$1.$2').replace(/(\d{3})(\d{1,2})$/, '$1-$2')
+    : d.replace(/^(\d{2})(\d)/, '$1.$2').replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+       .replace(/\.(\d{3})(\d)/, '.$1/$2').replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+});
+
+function erro(texto){
+  el('aviso').innerHTML =
+    '<div class="aviso aviso-erro"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v5"></path><path d="M12 16h.01"></path></svg><span>' + texto + '</span></div>';
+}
+
+el('forma').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  el('aviso').innerHTML = '';
+  const empresa = el('empresa').value.trim();
+  if (empresa.length < 2) return erro('Informe o nome da empresa do cliente.');
+
+  const b = el('btnSalvar');
+  b.disabled = true;
+  b.innerHTML = '<span class="girando"></span> Cadastrando';
+  try {
+    await chamar('/oportunidades', {
+      method: 'POST',
+      body: JSON.stringify({
+        titulo: empresa,
+        cliente_empresa: empresa,
+        cliente_nome: el('contato').value.trim() || null,
+        cliente_whatsapp: so(el('whatsapp').value) || null,
+        cliente_email: el('email').value.trim() || null,
+        cliente_documento: so(el('documento').value) || null,
+        origem: el('origem').value || null,
+      }),
+    });
+    window.location.href = '../';
+  } catch (ex) {
+    b.disabled = false;
+    b.textContent = 'Cadastrar';
+    erro(ex.message);
+  }
+});
+</script>
+</body>
+</html>
