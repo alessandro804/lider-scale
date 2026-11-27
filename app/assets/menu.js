@@ -43,8 +43,16 @@ const ICONES = {
 const Menu = {
   montar(atual) {
     const papel = (Sessao.usuario().papel) || 'closer';
-    const base = window.location.pathname.includes('/app/') &&
-                 !window.location.pathname.endsWith('/app/') ? '../' : '';
+    // ★★★★ A VOLTA ATE /app/ E CONTADA, nao chutada. A versao anterior
+    //   assumia um nivel so, e em /app/oportunidades/nova/ a logo e todos os
+    //   links do menu apontavam um nivel acima do que deviam: a imagem some
+    //   e os itens levam para lugar nenhum. Peguei olhando a tela, porque
+    //   imagem quebrada nao da erro no console nem falha em teste de rota.
+    const partes = (window.location.pathname.split('/app/')[1] || '').split('/').filter(Boolean);
+    // ★★ o ultimo pedaco com ponto e um arquivo, nao uma pasta: /app/index.html
+    //   esta na raiz do app, e contar o arquivo mandaria um nivel a mais.
+    if (partes.length && partes[partes.length - 1].indexOf('.') >= 0) partes.pop();
+    const base = '../'.repeat(partes.length);
     let html = '';
     for (const it of MENU) {
       if (it.grupo) {
