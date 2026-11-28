@@ -148,7 +148,35 @@ function certo(onde, html){
   el(onde).innerHTML =
     '<div class="aviso aviso-certo"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"></path></svg><span>' + html + '</span></div>';
 }
+/* ★★★★ AMBAR, NAO VERMELHO. "O cliente nao tem WhatsApp" aparece depois de
+   um envio que DEU CERTO: a proposta foi, o link existe. Vermelho ali faria
+   o closer achar que o envio falhou e repetir o envio. Vermelho e so para
+   falha; o que ficou para depois e ambar. */
+function atencao(onde, html){
+  el(onde).innerHTML +=
+    '<div class="aviso aviso-atencao"><svg class="ico" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg><span>' + html + '</span></div>';
+}
 function limpar(onde){ el(onde).innerHTML = ''; }
+
+/* ── o que dizer sobre o aviso no WhatsApp ────────────────────────────── */
+/* ★★★ O closer so precisa saber de duas coisas: se tem de mandar o link na
+   mao, e se o aviso foi segurado para a manha. O resto e detalhe de
+   entrega e vive na fila do super ADM. */
+function recadoDoAviso(aviso){
+  if (!aviso) return null;
+  if (aviso.estado === 'sem_numero') return { tom: 'atencao', texto: t('prop.sem_whats') };
+  if (aviso.estado === 'repetida')   return { tom: 'atencao', texto: t('prop.aviso_repetido') };
+  if (aviso.estado === 'na_fila') {
+    if (!aviso.sai_as) return { tom: 'certo', texto: t('prop.avisando') };
+    let hora = String(aviso.hora_inicio == null ? 8 : aviso.hora_inicio) + 'h';
+    try {
+      hora = new Date(aviso.sai_as).toLocaleTimeString(Idioma.escolhido(),
+        { hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' });
+    } catch (e) { /* fica a hora simples */ }
+    return { tom: 'atencao', texto: t('prop.aviso_segurado').replace('{{hora}}', hora) };
+  }
+  return null;
+}
 
 /* ── a lista de oportunidades ─────────────────────────────────────────── */
 async function carregar(){
@@ -259,6 +287,14 @@ el('btnMontar').addEventListener('click', async function () {
     certo('gavetaAviso',
       t('prop.enviada') + '<br><br>' +
       '<span style="word-break:break-all;font-size:12.5px;color:var(--violeta-200)">' + esc(env.link) + '</span>');
+
+    /* ★★★★ CADA RECADO NA SUA CAIXA. Grudar "o cliente nao tem WhatsApp" no
+       mesmo paragrafo do "proposta enviada" faz os dois virarem um texto so,
+       e o que importa se perde no meio. */
+    const recado = recadoDoAviso(env.aviso);
+    if (recado && recado.tom === 'atencao') atencao('gavetaAviso', esc(recado.texto));
+    else if (recado) el('gavetaAviso').innerHTML +=
+      '<div class="aviso aviso-certo" style="margin-top:8px"><span>' + esc(recado.texto) + '</span></div>';
     b.textContent = t('prop.copiar');
     b.disabled = false;
     b.onclick = function () {
